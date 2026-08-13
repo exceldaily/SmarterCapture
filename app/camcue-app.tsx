@@ -34,11 +34,9 @@ import {
   Share2,
   ShieldCheck,
   SlidersHorizontal,
-  Sparkles,
   Star,
   Sun,
   Video,
-  WandSparkles,
   X,
   Zap,
 } from "lucide-react";
@@ -360,7 +358,7 @@ export default function CamCueApp() {
   };
 
   const shareSetup = async () => {
-    const headline = `${scene.emoji} ${scene.name} · ${camera.manufacturer} ${camera.model}`;
+    const headline = `${scene.name} · ${camera.manufacturer} ${camera.model}`;
     const body = result.settings.slice(0, 7).map((line) => `${line.label}: ${line.value}`).join("\n");
     const shareText = `CAMCUE RECIPE\n${headline}\n\n${body}`;
     try {
@@ -397,11 +395,11 @@ export default function CamCueApp() {
           <div className="home-view page-width">
             <section className="hero">
               <div className="hero-copy">
-                <div className="eyebrow"><span className="rec-dot" /> CAMERA SETTINGS, SOLVED</div>
-                <h1>You shoot.<br /><em>We dial it in.</em></h1>
-                <p>Choose your camera and what you&apos;re filming. CamCue gives you the exact settings—in about 10 seconds.</p>
+                <div className="eyebrow"><span className="rec-dot" /> A PRACTICAL CAMERA GUIDE</div>
+                <h1>Camera settings for the shot in front of you.</h1>
+                <p>Choose your camera, describe the scene and get a setup that works with the gear you actually own.</p>
                 <div className="hero-actions">
-                  <button className="primary-button" onClick={() => startFlow(1)}>Get my settings <ArrowRight size={19} /></button>
+                  <button className="primary-button" onClick={() => startFlow(1)}>Choose a camera <ArrowRight size={19} /></button>
                   <button className="secondary-button" onClick={() => navTo("bag")}><Camera size={18} /> My camera bag</button>
                 </div>
                 <div className="trust-row">
@@ -411,9 +409,9 @@ export default function CamCueApp() {
                 </div>
               </div>
               <div className="hero-device" aria-label="Example CamCue recommendation">
-                <div className="device-top"><span><span className="rec-dot" /> SHOT READY</span><span>4K · 60</span></div>
+                <div className="device-top"><span><span className="rec-dot" /> RECOMMENDED SETUP</span><span>4K · 60</span></div>
                 <div className="device-scene">
-                  <span className="scene-emoji">🎣</span>
+                  <span className="scene-code">OF</span>
                   <div><small>OFFSHORE FISHING</small><strong>Action 6</strong></div>
                   <BadgeCheck className="verified-icon" size={21} />
                 </div>
@@ -428,30 +426,30 @@ export default function CamCueApp() {
             </section>
 
             <section className="natural-box">
-              <div className="natural-heading"><WandSparkles size={20} /><div><strong>Tell CamCue what you&apos;re doing</strong><span>Skip the taps. Describe the shot naturally.</span></div></div>
+              <div className="natural-heading"><SlidersHorizontal size={20} /><div><strong>Describe the shot</strong><span>Use a sentence instead of the selectors.</span></div></div>
               <div className="natural-input">
                 <input value={naturalText} onChange={(event) => setNaturalText(event.target.value)} onKeyDown={(event) => event.key === "Enter" && parseNatural()} placeholder="Fishing from a boat tomorrow. Sunny, chest mount, for YouTube…" aria-label="Describe what you are shooting" />
                 <button onClick={parseNatural} disabled={!naturalText.trim()} aria-label="Build recommendation"><ArrowRight size={20} /></button>
               </div>
-              <small>Works instantly with smart matching. No AI call required.</small>
+              <small>CamCue reads the details and applies the same compatibility rules.</small>
             </section>
 
             <section className="home-section">
-              <div className="section-heading"><div><span>QUICK START</span><h2>Popular right now</h2></div><button onClick={() => startFlow(2)}>View all scenes <ArrowRight size={16} /></button></div>
+              <div className="section-heading"><div><span>COMMON SCENES</span><h2>Start with the shot</h2></div><button onClick={() => startFlow(2)}>View all scenes <ArrowRight size={16} /></button></div>
               <div className="popular-grid">
-                {POPULAR_SCENES.map((id) => {
+                {POPULAR_SCENES.map((id, index) => {
                   const item = getScene(id);
                   if (!item) return null;
-                  return <button key={id} className={`popular-card tone-${item.group}`} onClick={() => { chooseScene(id); startFlow(3); }}><span>{item.emoji}</span><strong>{item.name}</strong><small>Get settings <ChevronRight size={13} /></small></button>;
+                  return <button key={id} className={`popular-card tone-${item.group}`} onClick={() => { chooseScene(id); startFlow(3); }}><span className="scene-index">{String(index + 1).padStart(2, "0")}</span><strong>{item.name}</strong><small>Open setup <ChevronRight size={13} /></small></button>;
                 })}
               </div>
             </section>
 
             {saved.length > 0 && (
               <section className="home-section">
-                <div className="section-heading"><div><span>READY WHEN YOU ARE</span><h2>Shoot again</h2></div><button onClick={() => navTo("bag")}>All saved setups <ArrowRight size={16} /></button></div>
+                <div className="section-heading"><div><span>RECENT</span><h2>Use a saved setup</h2></div><button onClick={() => navTo("bag")}>All saved setups <ArrowRight size={16} /></button></div>
                 <div className="shoot-again">
-                  <div className="shoot-again-icon">{getScene(saved[0].scenario.sceneId)?.emoji ?? "🎬"}</div>
+                  <div className="shoot-again-icon"><Camera size={22} /></div>
                   <div><small>LAST SAVED SETUP</small><strong>{saved[0].name}</strong><span>{lightOptions.find((item) => item.id === saved[0].scenario.light)?.name} · {platformOptions.find((item) => item.id === saved[0].scenario.platform)?.name ?? "Personal"}</span></div>
                   <button onClick={() => loadSaved(saved[0])}>Load <Play size={15} fill="currentColor" /></button>
                 </div>
@@ -475,7 +473,7 @@ export default function CamCueApp() {
                 {bag.length > 0 && !cameraQuery && (
                   <div className="picker-block"><div className="picker-label"><Camera size={14} /> MY CAMERA BAG</div><div className="camera-grid compact-grid">{bag.map((id) => getCamera(id)).filter(Boolean).map((item) => item && <CameraCard key={item.id} item={item} selected={cameraId === item.id} inBag onChoose={() => setCameraId(item.id)} onBag={() => toggleBag(item.id)} />)}</div></div>
                 )}
-                <div className="picker-block"><div className="picker-label"><Sparkles size={14} /> {cameraQuery ? `${filteredCameras.length} MATCHES` : "ALL CAMERAS"}</div><div className="camera-grid">{filteredCameras.map((item) => <CameraCard key={item.id} item={item} selected={cameraId === item.id} inBag={bag.includes(item.id)} onChoose={() => setCameraId(item.id)} onBag={() => toggleBag(item.id)} />)}</div></div>
+                <div className="picker-block"><div className="picker-label"><Search size={14} /> {cameraQuery ? `${filteredCameras.length} MATCHES` : "ALL CAMERAS"}</div><div className="camera-grid">{filteredCameras.map((item) => <CameraCard key={item.id} item={item} selected={cameraId === item.id} inBag={bag.includes(item.id)} onChoose={() => setCameraId(item.id)} onBag={() => toggleBag(item.id)} />)}</div></div>
                 <div className="flow-footer"><span>{camera.manufacturer} {camera.model} selected</span><button className="primary-button" onClick={() => setStep(2)}>Choose my scene <ArrowRight size={18} /></button></div>
               </section>
             )}
@@ -485,8 +483,8 @@ export default function CamCueApp() {
                 <div className="flow-heading"><span className="step-icon"><Compass size={23} /></span><div><h1>What are you shooting?</h1><p>Pick the closest match. You can fine-tune it next.</p></div></div>
                 <label className="search-field"><Search size={18} /><input value={sceneQuery} onChange={(event) => setSceneQuery(event.target.value)} placeholder="Search fishing, night, vlog…" /></label>
                 {!sceneQuery && <div className="group-tabs" role="tablist">{sceneGroups.map((group) => <button key={group.id} className={sceneGroup === group.id ? "active" : ""} onClick={() => setSceneGroup(group.id)}>{group.name}</button>)}</div>}
-                <div className="scene-grid">{filteredScenes.map((item) => <button key={item.id} className={`scene-card ${sceneId === item.id ? "selected" : ""}`} onClick={() => chooseScene(item.id)}><span>{item.emoji}</span><strong>{item.name}</strong>{sceneId === item.id && <i><Check size={13} /></i>}</button>)}</div>
-                <div className="flow-footer"><span>{scene.emoji} {scene.name} selected</span><button className="primary-button" onClick={() => setStep(3)}>Add conditions <ArrowRight size={18} /></button></div>
+                <div className="scene-grid">{filteredScenes.map((item) => <button key={item.id} className={`scene-card ${sceneId === item.id ? "selected" : ""}`} onClick={() => chooseScene(item.id)}><span className="scene-monogram">{item.name.split(/\s|\//).filter(Boolean).slice(0, 2).map((word) => word[0]).join("").toUpperCase()}</span><strong>{item.name}</strong>{sceneId === item.id && <i><Check size={13} /></i>}</button>)}</div>
+                <div className="flow-footer"><span>{scene.name} selected</span><button className="primary-button" onClick={() => setStep(3)}>Add conditions <ArrowRight size={18} /></button></div>
               </section>
             )}
 
@@ -520,21 +518,21 @@ export default function CamCueApp() {
             </div>
             <section className="ready-intro">
               <div className="focus-brackets"><span /><Focus size={25} /><span /></div>
-              <span>SHOT READY</span>
-              <h1>Your shot is dialed in.</h1>
-              <p>No guessing. Set these, hit record, and focus on the moment.</p>
+              <span>SETUP READY</span>
+              <h1>Use these settings.</h1>
+              <p>They have been checked against your camera and the conditions you selected.</p>
             </section>
 
             <section className="recommendation-card">
               <div className="ticket-top">
-                <div><small>CAMCUE RECOMMENDS</small><h2>{scene.emoji} {scene.name}</h2><p>{camera.manufacturer} {camera.model}</p></div>
+                <div><small>RECOMMENDED FOR</small><h2>{scene.name}</h2><p>{camera.manufacturer} {camera.model}</p></div>
                 <div className={`confidence-badge ${result.confidence}`}><CircleCheck size={17} /><span><small>CONFIDENCE</small>{confidenceCopy(result.confidence)}</span></div>
               </div>
               <div className="condition-strip">
-                <span>{lightOptions.find((item) => item.id === light)?.emoji} {lightOptions.find((item) => item.id === light)?.name}</span>
-                <span>{movementOptions.find((item) => item.id === movement)?.emoji} {movementOptions.find((item) => item.id === movement)?.name}</span>
-                <span>{mountOptions.find((item) => item.id === mount)?.emoji} {mountOptions.find((item) => item.id === mount)?.name}</span>
-                <span>{platformOptions.find((item) => item.id === platform)?.emoji} {platformOptions.find((item) => item.id === platform)?.name}</span>
+                <span>Light · {lightOptions.find((item) => item.id === light)?.name}</span>
+                <span>Motion · {movementOptions.find((item) => item.id === movement)?.name}</span>
+                <span>Mount · {mountOptions.find((item) => item.id === mount)?.name}</span>
+                <span>Output · {platformOptions.find((item) => item.id === platform)?.name}</span>
               </div>
               <div className="ticket-cut"><i /><span>RECOMMENDED SETUP</span><i /></div>
               <div className="settings-grid">{result.settings.map((line) => <SettingTile key={line.key} line={line} />)}</div>
@@ -545,12 +543,12 @@ export default function CamCueApp() {
             {result.warnings.length > 0 && <div className="warnings">{result.warnings.map((warning) => <p key={warning}><CircleAlert size={17} />{warning}</p>)}</div>}
 
             <section className="result-section">
-              <div className="result-section-heading"><div><span>ONE-TAP ADJUSTMENTS</span><h2>Quick tweaks</h2></div><p>Settings update instantly.</p></div>
-              <div className="tweak-grid">{tweakOptions.map((item) => <button key={item.id} className={tweaks.includes(item.id) ? "selected" : ""} onClick={() => toggleTweak(item.id)}>{tweaks.includes(item.id) ? <Check size={15} /> : <Sparkles size={15} />}{item.name}</button>)}</div>
+              <div className="result-section-heading"><div><span>ADJUST THE RESULT</span><h2>Change the priority</h2></div><p>The setup updates immediately.</p></div>
+              <div className="tweak-grid">{tweakOptions.map((item) => <button key={item.id} className={tweaks.includes(item.id) ? "selected" : ""} onClick={() => toggleTweak(item.id)}>{tweaks.includes(item.id) ? <Check size={15} /> : <SlidersHorizontal size={15} />}{item.name}</button>)}</div>
             </section>
 
             <section className="mistake-card">
-              <div className="mistake-title"><span>!</span><div><small>FIELD NOTES</small><h2>Don&apos;t mess this up</h2></div></div>
+              <div className="mistake-title"><span>!</span><div><small>BEFORE RECORDING</small><h2>Things to check</h2></div></div>
               <div className="mistake-list">{result.mistakes.slice(0, 3).map((mistake, index) => <div key={mistake}><i>0{index + 1}</i><p>{mistake}</p></div>)}</div>
             </section>
 
@@ -566,7 +564,7 @@ export default function CamCueApp() {
             </section>
 
             <section className="result-section what-if-section">
-              <div className="result-section-heading"><div><span>UNDERSTAND THE TRADEOFF</span><h2>What if?</h2></div></div>
+              <div className="result-section-heading"><div><span>COMPARE OPTIONS</span><h2>What changes if…</h2></div></div>
               <div className="what-if-options">{whatIfChoices.map((item) => <button key={item.id} className={whatIf === item.id ? "selected" : ""} onClick={() => setWhatIf(item.id)}>{item.label}<ChevronRight size={15} /></button>)}</div>
               {whatIf && <div className="what-if-answer"><HelpCircle size={20} /><p>{whatIfAnswer(camera, scene, scenario, result, whatIf)}</p></div>}
             </section>
@@ -578,11 +576,11 @@ export default function CamCueApp() {
 
         {view === "recipes" && (
           <div className="library-view page-width">
-            <section className="library-hero"><span>CAMCUE VERIFIED</span><h1>Proven setups.<br />Ready to shoot.</h1><p>Expert-built starting points that still run through CamCue&apos;s compatibility engine.</p></section>
+            <section className="library-hero"><span>CAMERA-SPECIFIC RECIPES</span><h1>Tested starting points.</h1><p>Each recipe is checked against the selected camera before the settings are shown.</p></section>
             <div className="recipe-toolbar"><div><BadgeCheck size={17} /> {recipes.filter((item) => item.verified).length} verified recipes</div><button onClick={() => startFlow(1)}><Plus size={16} /> Build custom</button></div>
             <div className="recipe-grid">{recipes.map((recipe) => {
               const recipeCamera = getCamera(recipe.cameraId);
-              return <article className="recipe-card" key={recipe.id}><div className="recipe-card-top"><span>{recipe.emoji}</span>{recipe.verified && <i><BadgeCheck size={14} /> VERIFIED</i>}</div><h2>{recipe.name}</h2><p>{recipe.note}</p><div className="recipe-meta"><span>{recipeCamera?.model ?? "Camera coming soon"}</span><span>{lightOptions.find((item) => item.id === recipe.scenario.light)?.name}</span></div><button disabled={!recipeCamera} onClick={() => loadRecipe(recipe)}>{recipeCamera ? "Load recipe" : "Coming soon"}<ArrowRight size={16} /></button></article>;
+              return <article className="recipe-card" key={recipe.id}><div className="recipe-card-top"><span className="recipe-number">{recipe.id.split("-").slice(-1)[0].slice(0, 2).toUpperCase()}</span>{recipe.verified && <i><BadgeCheck size={14} /> VERIFIED</i>}</div><h2>{recipe.name}</h2><p>{recipe.note}</p><div className="recipe-meta"><span>{recipeCamera?.model ?? "Camera coming soon"}</span><span>{lightOptions.find((item) => item.id === recipe.scenario.light)?.name}</span></div><button disabled={!recipeCamera} onClick={() => loadRecipe(recipe)}>{recipeCamera ? "Load recipe" : "Coming soon"}<ArrowRight size={16} /></button></article>;
             })}</div>
           </div>
         )}
@@ -592,7 +590,7 @@ export default function CamCueApp() {
             <section className="library-hero compact-hero"><span>YOUR KIT</span><h1>My Camera Bag</h1><p>Keep your gear and saved setups ready—even when the signal isn&apos;t.</p></section>
             <div className="bag-columns">
               <section className="bag-panel"><div className="bag-panel-heading"><div><Camera size={19} /><span><small>OWNED GEAR</small><h2>My cameras</h2></span></div><b>{bag.length}</b></div><div className="bag-camera-list">{bag.map((id) => getCamera(id)).filter(Boolean).map((item) => item && <div key={item.id}><span className="mini-camera"><Camera size={21} /></span><div><strong>{item.manufacturer} {item.model}</strong><small>{item.category} · {item.confidence} profile</small></div><button onClick={() => { setCameraId(item.id); startFlow(2); }}>Use <ChevronRight size={15} /></button></div>)}</div><button className="add-gear" onClick={() => startFlow(1)}><Plus size={16} /> Add another camera</button></section>
-              <section className="bag-panel"><div className="bag-panel-heading"><div><Bookmark size={19} /><span><small>OFFLINE READY</small><h2>Saved setups</h2></span></div><b>{saved.length}</b></div>{saved.length === 0 ? <div className="empty-state"><Bookmark size={28} /><strong>No saved setups yet</strong><p>Get a recommendation, then save it here for one-tap access.</p><button onClick={() => startFlow(1)}>Get my first setup</button></div> : <div className="saved-list">{saved.map((item) => <div key={item.id}><span>{getScene(item.scenario.sceneId)?.emoji ?? "🎬"}</span><div><strong>{item.name}</strong><small>{lightOptions.find((option) => option.id === item.scenario.light)?.name} · {mountOptions.find((option) => option.id === item.scenario.mount)?.name}</small></div><button onClick={() => loadSaved(item)} aria-label={`Load ${item.name}`}><Play size={15} fill="currentColor" /></button><button className="remove-saved" onClick={() => setSaved((current) => current.filter((savedItem) => savedItem.id !== item.id))} aria-label={`Delete ${item.name}`}><X size={15} /></button></div>)}</div>}</section>
+              <section className="bag-panel"><div className="bag-panel-heading"><div><Bookmark size={19} /><span><small>SAVED ON THIS DEVICE</small><h2>Saved setups</h2></span></div><b>{saved.length}</b></div>{saved.length === 0 ? <div className="empty-state"><Bookmark size={28} /><strong>No saved setups yet</strong><p>Get a recommendation, then save it here for one-tap access.</p><button onClick={() => startFlow(1)}>Get my first setup</button></div> : <div className="saved-list">{saved.map((item) => <div key={item.id}><span><Camera size={17} /></span><div><strong>{item.name}</strong><small>{lightOptions.find((option) => option.id === item.scenario.light)?.name} · {mountOptions.find((option) => option.id === item.scenario.mount)?.name}</small></div><button onClick={() => loadSaved(item)} aria-label={`Load ${item.name}`}><Play size={15} fill="currentColor" /></button><button className="remove-saved" onClick={() => setSaved((current) => current.filter((savedItem) => savedItem.id !== item.id))} aria-label={`Delete ${item.name}`}><X size={15} /></button></div>)}</div>}</section>
             </div>
             <section className="all-gear"><div className="section-heading"><div><span>SUPPORTED CAMERAS</span><h2>Add to your bag</h2></div></div><div className="camera-grid">{cameras.map((item) => <CameraCard key={item.id} item={item} selected={false} inBag={bag.includes(item.id)} onChoose={() => { setCameraId(item.id); startFlow(2); }} onBag={() => toggleBag(item.id)} />)}</div></section>
           </div>
@@ -600,7 +598,7 @@ export default function CamCueApp() {
 
         {view === "learn" && (
           <div className="learn-view page-width">
-            <section className="library-hero"><span>CAMERA SCHOOL, MINUS THE HOMEWORK</span><h1>Learn just enough.<br />Shoot much better.</h1><p>Plain-English answers you can finish before your coffee gets cold.</p></section>
+            <section className="library-hero"><span>PLAIN-LANGUAGE GUIDES</span><h1>Understand the setting.</h1><p>Short explanations for the controls that make a visible difference.</p></section>
             <div className="learn-grid">{learnCards.map(({ title, time, icon: Icon, text }) => <article key={title} className="learn-card"><div><Icon size={22} /><span>{time}</span></div><h2>{title}</h2><p>{text}</p></article>)}</div>
             <section className="fps-lab"><div><span>QUICK VISUAL GUIDE</span><h2>Frame rate at a glance</h2><p>More frames make motion smoother—and give you more room to slow it down.</p></div><div className="fps-track">{[{ fps: 24, label: "Cinematic" }, { fps: 30, label: "Everyday" }, { fps: 60, label: "Smooth action" }, { fps: 120, label: "Slow motion" }].map((item) => <div key={item.fps}><span style={{ "--dots": item.fps / 12 } as React.CSSProperties}>{Array.from({ length: item.fps / 12 }).map((_, index) => <i key={index} />)}</span><strong>{item.fps}<small> FPS</small></strong><p>{item.label}</p></div>)}</div></section>
           </div>
@@ -609,7 +607,7 @@ export default function CamCueApp() {
 
       <nav className="mobile-nav" aria-label="Mobile navigation">
         <button className={view === "home" ? "active" : ""} onClick={() => navTo("home")}><Home size={20} /><span>Home</span></button>
-        <button className={view === "recipes" ? "active" : ""} onClick={() => navTo("recipes")}><Sparkles size={20} /><span>Recipes</span></button>
+        <button className={view === "recipes" ? "active" : ""} onClick={() => navTo("recipes")}><Bookmark size={20} /><span>Recipes</span></button>
         <button className="mobile-shoot" onClick={() => startFlow(1)}><span><Aperture size={24} /></span><small>Shoot</small></button>
         <button className={view === "bag" ? "active" : ""} onClick={() => navTo("bag")}><Camera size={20} /><span>Bag</span></button>
         <button className={view === "learn" ? "active" : ""} onClick={() => navTo("learn")}><Lightbulb size={20} /><span>Learn</span></button>
@@ -636,7 +634,7 @@ function ChoiceGroup({ title, eyebrow, options, value, onChange }: { title: stri
   return (
     <div className="choice-group">
       <h2><span>{eyebrow}</span>{title}</h2>
-      <div className="choice-grid">{options.map((item) => <button key={item.id} className={value === item.id ? "selected" : ""} onClick={() => onChange(item.id)} aria-pressed={value === item.id}>{item.emoji && <span>{item.emoji}</span>}<strong>{item.name}</strong>{value === item.id && <i><Check size={12} /></i>}</button>)}</div>
+      <div className="choice-grid">{options.map((item) => <button key={item.id} className={value === item.id ? "selected" : ""} onClick={() => onChange(item.id)} aria-pressed={value === item.id}><span className="choice-mark">{item.name.slice(0, 2).toUpperCase()}</span><strong>{item.name}</strong>{value === item.id && <i><Check size={12} /></i>}</button>)}</div>
     </div>
   );
 }

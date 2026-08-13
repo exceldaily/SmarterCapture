@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: "CamCue — Camera Settings, Solved",
-    description: "Tell CamCue what you're shooting and get compatible camera settings in seconds.",
+    description: "Camera settings for the shot in front of you, checked against the gear you own.",
     applicationName: "CamCue",
     appleWebApp: {
       capable: true,
@@ -31,16 +31,16 @@ export async function generateMetadata(): Promise<Metadata> {
     formatDetection: { telephone: false },
     openGraph: {
       title: "CamCue — Camera Settings, Solved",
-      description: "You shoot. We dial it in.",
+      description: "Camera settings for the shot in front of you.",
       type: "website",
       url: baseUrl,
-      images: [{ url: `${baseUrl}/og.png`, width: 1736, height: 905, alt: "CamCue camera settings card" }],
+      images: [{ url: `${baseUrl}/og-v2.png`, width: 1736, height: 905, alt: "CamCue camera settings guide" }],
     },
     twitter: {
       card: "summary_large_image",
       title: "CamCue — Camera Settings, Solved",
-      description: "You shoot. We dial it in.",
-      images: [`${baseUrl}/og.png`],
+      description: "Camera settings for the shot in front of you.",
+      images: [`${baseUrl}/og-v2.png`],
     },
   };
 }

@@ -229,7 +229,7 @@ summary:focus-visible {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
   align-items: center;
-  gap: 80px;
+  gap: 72px;
   padding: 66px 0 54px;
 }
 
@@ -265,16 +265,10 @@ summary:focus-visible {
 .hero-copy h1 {
   max-width: 640px;
   margin: 0;
-  font-size: clamp(54px, 6.3vw, 88px);
-  font-weight: 830;
-  letter-spacing: -0.065em;
-  line-height: 0.94;
-}
-
-.hero-copy h1 em {
-  color: var(--pine);
-  font-family: Georgia, serif;
-  font-weight: 500;
+  font-size: clamp(50px, 5.5vw, 76px);
+  font-weight: 760;
+  letter-spacing: -0.052em;
+  line-height: 0.98;
 }
 
 .hero-copy > p {
@@ -310,12 +304,13 @@ summary:focus-visible {
 .primary-button {
   background: var(--ink);
   color: white;
-  box-shadow: 0 6px 0 #8da929;
+  box-shadow: 0 3px 10px rgba(17, 20, 17, 0.12);
 }
 
 .primary-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 0 #8da929;
+  background: var(--pine-dark);
+  box-shadow: 0 6px 15px rgba(17, 20, 17, 0.15);
 }
 
 .secondary-button {
@@ -403,7 +398,7 @@ summary:focus-visible {
   color: var(--ink);
 }
 
-.scene-emoji {
+.scene-code {
   width: 53px;
   height: 53px;
   display: grid;
@@ -411,7 +406,11 @@ summary:focus-visible {
   border: 1px solid #d5d5ce;
   border-radius: 10px;
   background: white;
-  font-size: 25px;
+  color: var(--pine);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 16px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
 }
 
 .device-scene div {
@@ -638,8 +637,12 @@ summary:focus-visible {
   box-shadow: 0 12px 30px rgba(20, 25, 21, 0.08);
 }
 
-.popular-card > span {
-  font-size: 33px;
+.popular-card > .scene-index {
+  color: var(--pine);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
 }
 
 .popular-card strong {
@@ -1052,8 +1055,19 @@ summary:focus-visible {
   box-shadow: inset 0 0 0 1px var(--pine);
 }
 
-.scene-card > span {
-  font-size: 27px;
+.scene-card > .scene-monogram {
+  width: 35px;
+  height: 35px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #d4d6cf;
+  border-radius: 7px;
+  background: white;
+  color: var(--pine);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.06em;
 }
 
 .scene-card strong {
@@ -1145,8 +1159,12 @@ summary:focus-visible {
   cursor: pointer;
 }
 
-.choice-grid button > span {
-  font-size: 20px;
+.choice-grid button > .choice-mark {
+  color: var(--pine);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
 }
 
 .choice-grid button strong {
@@ -1889,7 +1907,19 @@ summary:focus-visible {
   justify-content: space-between;
 }
 
-.recipe-card-top > span { font-size: 31px; }
+.recipe-card-top > .recipe-number {
+  min-width: 36px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: var(--paper-2);
+  color: var(--pine);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+}
 .recipe-card-top i { display: flex; align-items: center; gap: 4px; color: var(--pine); font-family: var(--font-geist-mono), monospace; font-size: 8px; font-style: normal; font-weight: 750; letter-spacing: 0.08em; }
 .recipe-card h2 { margin: 22px 0 7px; font-size: 20px; letter-spacing: -0.03em; }
 .recipe-card > p { flex: 1; margin: 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
@@ -1983,7 +2013,7 @@ summary:focus-visible {
 
 @media (max-width: 980px) {
   .hero { grid-template-columns: 1fr 0.9fr; gap: 35px; }
-  .hero-copy h1 { font-size: 62px; }
+  .hero-copy h1 { font-size: 58px; }
   .popular-grid { grid-template-columns: repeat(3, 1fr); }
   .popular-card { min-height: 150px; }
   .scene-grid { grid-template-columns: repeat(3, 1fr); }
@@ -1998,7 +2028,7 @@ summary:focus-visible {
   .bag-button { padding: 0 8px; border: 0; background: transparent; }
   .bag-button b { min-width: 20px; height: 20px; }
   .hero { min-height: 0; grid-template-columns: 1fr; gap: 42px; padding: 47px 0 49px; }
-  .hero-copy h1 { font-size: clamp(51px, 15vw, 74px); }
+  .hero-copy h1 { font-size: clamp(47px, 13vw, 67px); }
   .hero-copy > p { margin-top: 22px; font-size: 16px; }
   .hero-actions { align-items: stretch; flex-direction: column; }
   .primary-button, .secondary-button { width: 100%; }
@@ -2031,7 +2061,7 @@ summary:focus-visible {
   .camera-select { min-height: 82px; }
   .scene-grid { grid-template-columns: repeat(3, 1fr); }
   .scene-card { min-height: 106px; padding: 12px; }
-  .scene-card > span { font-size: 23px; }
+  .scene-card > .scene-monogram { font-size: 10px; }
   .scene-card strong { font-size: 10px; }
   .flow-footer { bottom: 79px; margin: 28px -5px -5px; }
   .flow-footer > span { display: none; }
