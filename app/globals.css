@@ -1255,10 +1255,12 @@ p { margin: 0; }
   letter-spacing: 0.14em;
 }
 
+/* Bottom-left of the panel: the heart owns the top-right corner permanently,
+   so the two controls can never collide. */
 .selected-check {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  bottom: 12px;
+  left: 12px;
   display: grid;
   place-items: center;
   width: 24px;
@@ -1288,8 +1290,6 @@ p { margin: 0; }
 
 .heart-button:hover { color: var(--signal); background: rgba(255, 255, 255, 0.95); transform: scale(1.08); }
 .heart-button.saved { color: var(--signal); background: rgba(255, 255, 255, 0.95); }
-
-.camera-card.selected .heart-button { top: 44px; }
 
 .flow-footer {
   display: flex;
