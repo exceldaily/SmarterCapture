@@ -8,8 +8,7 @@
     "build:sites": "vinext build",
     "start": "next start",
     "lint": "eslint",
-    "validate": "tsx scripts/validate.ts",
-    "scenes": "tsx scripts/scenes.ts"
+    "validate": "tsx scripts/validate.ts"
   },
   "dependencies": {
     "lucide-react": "^1.31.0",
