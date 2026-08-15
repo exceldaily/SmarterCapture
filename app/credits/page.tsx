@@ -63,10 +63,14 @@ export default function CreditsPage() {
       <section>
         <h2>Imagery</h2>
         <p>
-          <strong>This site uses no photography at all.</strong> Not stock, not press imagery, not
-          manufacturer product shots. Every visual element is drawn in code: the camera
-          illustrations across all {cameras.length} profiles, and the artwork behind
-          all {scenes.length} scenes.
+          <strong>This site uses no photography.</strong> No stock images, no press imagery, no
+          manufacturer product shots, and no pictures of people, places or equipment. The camera
+          cards across all {cameras.length} profiles and the artwork behind all {scenes.length}{" "}
+          scenes are generated in code from the underlying data.
+        </p>
+        <p>
+          The one exception is a single abstract graphic used as the home page banner. It depicts
+          nothing and identifies no one — it is colour and light.
         </p>
         <p>
           That is a deliberate choice rather than a limitation. Product photography assembled from
