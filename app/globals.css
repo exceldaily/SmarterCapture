@@ -812,6 +812,28 @@ p { margin: 0; }
   content: "";
   inset: 0;
   background: linear-gradient(180deg, transparent 30%, rgba(6, 8, 9, 0.86) 100%);
+  z-index: 1;
+}
+
+/* Photographs sit above the generated gradient and below the scrim, so a
+   scene without a photo still looks deliberate rather than empty. */
+.scene-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.popular-card .scene-photo { z-index: 0; }
+.popular-card:hover .scene-photo { transform: scale(1.06); }
+
+/* With a photo present the flat gradient underneath is redundant, and the
+   scrim needs to start higher so the title stays legible over busy images. */
+.popular-card.has-photo::before { opacity: 0; }
+.popular-card.has-photo::after {
+  background: linear-gradient(180deg, rgba(6, 8, 9, 0.15) 0%, rgba(6, 8, 9, 0.55) 55%, rgba(6, 8, 9, 0.9) 100%);
 }
 
 .popular-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lift); }
@@ -828,7 +850,7 @@ p { margin: 0; }
   position: absolute;
   top: 14px;
   left: 16px;
-  z-index: 2;
+  z-index: 3;
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.14em;
@@ -837,7 +859,7 @@ p { margin: 0; }
 
 .popular-card strong {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   font-family: var(--font-display);
   font-size: 21px;
   font-weight: 800;
@@ -848,7 +870,7 @@ p { margin: 0; }
 
 .popular-card small {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -2941,6 +2963,97 @@ p { margin: 0; }
 }
 
 .footer-base span:first-child { color: rgba(255, 255, 255, 0.75); letter-spacing: 0.12em; text-transform: uppercase; }
+
+.footer-disclaimer {
+  padding: 22px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 92ch;
+}
+
+.footer-disclaimer p {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+
+.footer-disclaimer strong { color: rgba(255, 255, 255, 0.78); font-weight: 600; }
+
+.footer-cols a {
+  display: block;
+  padding: 5px 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.16s ease;
+}
+
+.footer-cols a:hover { color: var(--signal); }
+
+.brand-strip em {
+  flex-basis: 100%;
+  text-align: center;
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.32);
+}
+
+/* --- legal / credits pages -------------------------------------------------- */
+
+.legal-page { width: min(760px, calc(100% - 40px)); margin: 0 auto; padding: 56px 0 90px; }
+
+.legal-page header { margin-bottom: 40px; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
+.legal-page header span {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--signal);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+}
+.legal-page h1 { font-size: clamp(32px, 6vw, 52px); font-weight: 900; letter-spacing: -0.03em; text-transform: uppercase; }
+.legal-page header p { margin-top: 14px; color: var(--muted); font-size: 16px; line-height: 1.65; }
+
+.legal-page section { margin-bottom: 36px; }
+.legal-page h2 {
+  margin-bottom: 14px;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+.legal-page section p { margin-bottom: 12px; font-size: 15px; line-height: 1.7; color: #33383a; }
+.legal-page section p:last-child { margin-bottom: 0; }
+.legal-page strong { color: var(--ink); }
+
+.credit-list { list-style: none; margin: 0 0 16px; padding: 0; border-top: 1px solid var(--line); }
+.credit-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  justify-content: space-between;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+.credit-scene { font-family: var(--font-display); font-size: 14.5px; font-weight: 700; }
+.credit-by { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.credit-by a { color: var(--aqua-deep); }
+
+.legal-back { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--line); }
+.legal-back a {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.legal-back a:hover { color: var(--signal); }
 
 /* --- styleguide (internal design review) ----------------------------------- */
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import {
   Aperture,
   ArrowLeft,
@@ -42,6 +43,7 @@ import {
 } from "lucide-react";
 import { recommend, whatIfAnswer, whatIfOptions } from "@/lib/camcue/engine";
 import { CameraArt } from "./camera-art";
+import { ScenePhoto, hasScenePhoto } from "./scene-photo";
 import { brand } from "@/lib/camcue/brand";
 import { cameraBrands, cameras, categoryLabels, categoryOrder, getCamera } from "@/lib/camcue/data/cameras";
 import { recipes, type Recipe } from "@/lib/camcue/data/recipes";
@@ -492,8 +494,9 @@ export default function CamCueApp() {
             </section>
 
             <Reveal as="div" className="brand-strip">
-              <small>Capability profiles for</small>
+              <small>Independent capability research covering</small>
               {cameraBrands.map((name) => <b key={name}>{name}</b>)}
+              <em>Not affiliated with or endorsed by any manufacturer</em>
             </Reveal>
 
             <Reveal className="natural-box">
@@ -511,7 +514,18 @@ export default function CamCueApp() {
                 {POPULAR_SCENES.map((id, index) => {
                   const item = getScene(id);
                   if (!item) return null;
-                  return <button key={id} className={`popular-card tone-${item.group}`} onClick={() => { chooseScene(id); startFlow(3); }}><span className="scene-index">{String(index + 1).padStart(2, "0")}</span><strong>{item.name}</strong><small>Open setup <ChevronRight size={13} /></small></button>;
+                  return (
+                    <button
+                      key={id}
+                      className={`popular-card tone-${item.group}${hasScenePhoto(id) ? " has-photo" : ""}`}
+                      onClick={() => { chooseScene(id); startFlow(3); }}
+                    >
+                      <ScenePhoto sceneId={id} sizes="(max-width: 700px) 50vw, 22vw" priority={index < 2} />
+                      <span className="scene-index">{String(index + 1).padStart(2, "0")}</span>
+                      <strong>{item.name}</strong>
+                      <small>Open setup <ChevronRight size={13} /></small>
+                    </button>
+                  );
                 })}
               </div>
             </Reveal>
@@ -756,12 +770,28 @@ export default function CamCueApp() {
               <span>{cameras.filter((c) => c.confidence === "verified").length} verified</span>
               <span>{cameras.filter((c) => c.confidence === "high").length} high confidence</span>
               <span>Last review {cameras.reduce((latest, c) => (c.lastVerified > latest ? c.lastVerified : latest), "")}</span>
+              <Link href="/credits">Photo credits &amp; sources</Link>
             </div>
           </div>
         </div>
+
+        <div className="footer-disclaimer">
+          <p>
+            <strong>{brand.name} is an independent informational guide.</strong> It is not
+            affiliated with, endorsed by, sponsored by or otherwise connected to DJI, GoPro,
+            Insta360, Sony, Canon, Nikon, Fujifilm, Panasonic or any other manufacturer.
+          </p>
+          <p>
+            Camera names, model numbers and feature names are trademarks of their respective
+            owners and are used here only to identify the equipment a recommendation applies to.
+            Capability data is compiled from publicly published specifications. Settings are
+            guidance rather than a guarantee, so always confirm them on your own camera.
+          </p>
+        </div>
+
         <div className="footer-base">
           <span>{brand.domain}</span>
-          <span>Settings are guidance, not a guarantee — always confirm on your own camera.</span>
+          <span>Independent guide. No manufacturer affiliation.</span>
         </div>
       </footer>
 
