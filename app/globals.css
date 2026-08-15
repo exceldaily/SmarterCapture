@@ -1171,41 +1171,85 @@ p { margin: 0; }
   text-align: left;
 }
 
-/* The product panel — this is what makes a card read as a camera. */
+/* The spec plate — the card face states what the camera actually does.
+   It replaced a per-body-type illustration, where all 14 action cameras
+   shared one drawing and the largest element on the card said nothing. */
 .camera-visual {
   position: relative;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 10px;
   width: 100%;
-  height: 132px;
+  min-height: 132px;
+  padding: 34px 16px 16px;
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   overflow: hidden;
   transition: background 0.3s ease;
 }
 
-/* Sized by height so the drawing always fits the panel; width follows the
-   viewBox aspect rather than overflowing it. */
-.camera-visual .camera-art {
-  height: 84%;
-  width: auto;
-  max-width: 78%;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+/* Faint measurement rules, like a focusing screen. */
+.camera-visual::before {
+  position: absolute;
+  content: "";
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 26px 26px;
+  mask-image: radial-gradient(120% 100% at 100% 0%, #000 20%, transparent 72%);
+  pointer-events: none;
 }
 
-.camera-card:hover .camera-visual .camera-art { transform: scale(1.07) rotate(-1.5deg); }
+.plate-hero {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 4.4vw, 40px);
+  font-weight: 900;
+  letter-spacing: -0.045em;
+  line-height: 0.9;
+  color: #fff;
+}
 
-/* --- the illustration itself ---------------------------------------------- */
+.plate-hero i {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--signal);
+}
 
-.art-body { fill: currentColor; }
-.art-face { fill: rgba(255, 255, 255, 0.16); }
-.art-detail { fill: rgba(255, 255, 255, 0.4); }
-.art-detail-soft { fill: rgba(255, 255, 255, 0.22); }
-.art-stroke { stroke: currentColor; stroke-width: 5; fill: none; stroke-linecap: round; }
+.plate-chips {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
 
-.art-lens-barrel { fill: rgba(255, 255, 255, 0.28); }
-.art-lens-glass { fill: rgba(10, 12, 16, 0.55); }
-.art-lens-core { fill: rgba(120, 200, 230, 0.55); }
-.art-lens-glint { fill: rgba(255, 255, 255, 0.85); }
+.plate-chips em {
+  font-style: normal;
+  padding: 3px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.05);
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.09em;
+  color: rgba(255, 255, 255, 0.78);
+  white-space: nowrap;
+}
+
+/* Unverified profiles must not present themselves as data. */
+.camera-visual.pending .plate-hero { color: rgba(255, 255, 255, 0.35); }
+.camera-visual.pending .plate-chips em {
+  border-color: rgba(217, 148, 37, 0.55);
+  background: rgba(217, 148, 37, 0.16);
+  color: #f0c473;
+}
 
 /* Category tones — each body type gets its own product-shot backdrop. */
 .camera-visual.tone-action { background: linear-gradient(150deg, #2f3944, #161b21); color: #cfd8e2; }
@@ -2626,7 +2670,7 @@ p { margin: 0; }
   color: rgba(255, 255, 255, 0.85);
 }
 
-.mini-camera .camera-art { width: 86%; height: auto; }
+.mini-camera { font-family: var(--font-display); font-size: 14px; font-weight: 800; letter-spacing: -0.02em; }
 
 .mini-camera.tone-action { background: linear-gradient(150deg, #2f3944, #161b21); color: #cfd8e2; }
 .mini-camera.tone-360 { background: linear-gradient(150deg, #263a44, #121b21); color: #c7dce4; }
@@ -2636,25 +2680,6 @@ p { margin: 0; }
 .mini-camera.tone-mirrorless { background: linear-gradient(150deg, #2c3138, #14171a); color: #d2d8de; }
 .mini-camera.tone-cinema { background: linear-gradient(150deg, #241f1c, #100e0d); color: #ddd0c6; }
 
-/* hero product shot */
-.device-hero-art {
-  display: grid;
-  place-items: center;
-  padding: 22px 18px 6px;
-  color: #d7e0ea;
-}
-
-.device-hero-art .camera-art {
-  width: min(62%, 230px);
-  height: auto;
-  filter: drop-shadow(0 22px 32px rgba(0, 0, 0, 0.55));
-  animation: heroFloat 7s ease-in-out infinite;
-}
-
-@keyframes heroFloat {
-  0%, 100% { transform: translateY(0) rotate(-1deg); }
-  50% { transform: translateY(-9px) rotate(1deg); }
-}
 
 .bag-camera-list > div > div, .saved-list > div > div { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .bag-camera-list strong, .saved-list strong {
@@ -3155,8 +3180,8 @@ p { margin: 0; }
 .sg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
 
 .sg-item { margin: 0; border: 1px solid var(--line); border-radius: var(--radius-xl); background: var(--paper); overflow: hidden; }
-.sg-item .camera-visual { height: 160px; border-radius: 0; }
-.sg-item .camera-visual .camera-art { height: 84%; width: auto; max-width: 78%; }
+
+.sg-item .camera-visual { min-height: 150px; border-radius: 0; }
 .sg-item figcaption { display: flex; flex-direction: column; gap: 3px; padding: 14px 16px 16px; }
 .sg-item strong { font-family: var(--font-display); font-size: 16px; font-weight: 800; }
 .sg-item small { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }

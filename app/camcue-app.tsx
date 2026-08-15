@@ -42,7 +42,7 @@ import {
   Zap,
 } from "lucide-react";
 import { recommend, whatIfAnswer, whatIfOptions } from "@/lib/camcue/engine";
-import { CameraArt } from "./camera-art";
+import { cameraSpecPlate } from "@/lib/camcue/spec-plate";
 import { brand } from "@/lib/camcue/brand";
 import { cameraBrands, cameras, categoryLabels, categoryOrder, getCamera } from "@/lib/camcue/data/cameras";
 import { recipes, type Recipe } from "@/lib/camcue/data/recipes";
@@ -498,7 +498,7 @@ export default function CamCueApp() {
               </div>
               <div className="hero-device" aria-label={`Example ${brand.name} recommendation`}>
                 <div className="device-top"><span><span className="rec-dot" /> RECOMMENDED SETUP</span><span>4K · 60</span></div>
-                <div className="device-hero-art"><CameraArt category="action" /></div>
+                
                 <div className="device-scene">
                   <span className="scene-code">OF</span>
                   <div><small>OFFSHORE FISHING</small><strong>Action 6</strong></div>
@@ -753,7 +753,7 @@ export default function CamCueApp() {
           <div className="bag-view page-width">
             <section className="library-hero compact-hero"><span>YOUR KIT</span><h1>My Camera Bag</h1><p>Keep your gear and saved setups ready—even when the signal isn&apos;t.</p></section>
             <div className="bag-columns">
-              <section className="bag-panel"><div className="bag-panel-heading"><div><Camera size={19} /><span><small>OWNED GEAR</small><h2>My cameras</h2></span></div><b>{bag.length}</b></div><div className="bag-camera-list">{bag.map((id) => getCamera(id)).filter(Boolean).map((item) => item && <div key={item.id}><span className={`mini-camera tone-${item.category}`}><CameraArt category={item.category} /></span><div><strong>{item.manufacturer} {item.model}</strong><small>{categoryLabels[item.category]} · {item.confidence} profile</small></div><button onClick={() => { setCameraId(item.id); startFlow(2); }}>Use <ChevronRight size={15} /></button></div>)}</div><button className="add-gear" onClick={() => startFlow(1)}><Plus size={16} /> Add another camera</button></section>
+              <section className="bag-panel"><div className="bag-panel-heading"><div><Camera size={19} /><span><small>OWNED GEAR</small><h2>My cameras</h2></span></div><b>{bag.length}</b></div><div className="bag-camera-list">{bag.map((id) => getCamera(id)).filter(Boolean).map((item) => item && <div key={item.id}><span className={`mini-camera tone-${item.category}`}>{cameraSpecPlate(item).hero}</span><div><strong>{item.manufacturer} {item.model}</strong><small>{categoryLabels[item.category]} · {item.confidence} profile</small></div><button onClick={() => { setCameraId(item.id); startFlow(2); }}>Use <ChevronRight size={15} /></button></div>)}</div><button className="add-gear" onClick={() => startFlow(1)}><Plus size={16} /> Add another camera</button></section>
               <section className="bag-panel"><div className="bag-panel-heading"><div><Bookmark size={19} /><span><small>SAVED ON THIS DEVICE</small><h2>Saved setups</h2></span></div><b>{saved.length}</b></div>{saved.length === 0 ? <div className="empty-state"><Bookmark size={28} /><strong>No saved setups yet</strong><p>Get a recommendation, then save it here for one-tap access.</p><button onClick={() => startFlow(1)}>Get my first setup</button></div> : <div className="saved-list">{saved.map((item) => <div key={item.id}><span><Camera size={17} /></span><div><strong>{item.name}</strong><small>{lightOptions.find((option) => option.id === item.scenario.light)?.name} · {mountOptions.find((option) => option.id === item.scenario.mount)?.name}</small></div><button onClick={() => loadSaved(item)} aria-label={`Load ${item.name}`}><Play size={15} fill="currentColor" /></button><button className="remove-saved" onClick={() => setSaved((current) => current.filter((savedItem) => savedItem.id !== item.id))} aria-label={`Delete ${item.name}`}><X size={15} /></button></div>)}</div>}</section>
             </div>
             <section className="all-gear"><div className="section-heading"><div><span>SUPPORTED CAMERAS</span><h2>Add to your bag</h2></div></div><div className="camera-grid">{cameras.map((item) => <CameraCard key={item.id} item={item} selected={false} inBag={bag.includes(item.id)} onChoose={() => { setCameraId(item.id); startFlow(2); }} onBag={() => toggleBag(item.id)} />)}</div></section>
@@ -833,11 +833,18 @@ export default function CamCueApp() {
 }
 
 function CameraCard({ item, selected, inBag, onChoose, onBag }: { item: (typeof cameras)[number]; selected: boolean; inBag: boolean; onChoose: () => void; onBag: () => void }) {
+  const plate = cameraSpecPlate(item);
   return (
     <div className={`camera-card ${selected ? "selected" : ""}`}>
       <button className="camera-select" onClick={onChoose}>
-        <span className={`camera-visual tone-${item.category}`}>
-          <CameraArt category={item.category} />
+        <span className={`camera-visual tone-${item.category}${plate.pending ? " pending" : ""}`}>
+          <span className="plate-hero">
+            {plate.hero}
+            {plate.heroSub && <i>{plate.heroSub}</i>}
+          </span>
+          <span className="plate-chips">
+            {plate.chips.map((chip) => <em key={chip}>{chip}</em>)}
+          </span>
           {item.popular && <span className="popular-pill">POPULAR</span>}
         </span>
         <span className="camera-copy">
