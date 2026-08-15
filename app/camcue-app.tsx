@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Aperture,
   ArrowLeft,
@@ -41,6 +41,7 @@ import {
   Zap,
 } from "lucide-react";
 import { recommend, whatIfAnswer, whatIfOptions } from "@/lib/camcue/engine";
+import { CameraArt } from "./camera-art";
 import { brand } from "@/lib/camcue/brand";
 import { cameraBrands, cameras, categoryLabels, categoryOrder, getCamera } from "@/lib/camcue/data/cameras";
 import { recipes, type Recipe } from "@/lib/camcue/data/recipes";
@@ -138,6 +139,64 @@ function Brand({ compact = false }: { compact?: boolean }) {
   );
 }
 
+/**
+ * Reveals its children once scrolled into view.
+ *
+ * The visible state lives in React rather than being toggled with classList:
+ * React owns `className` on these elements, so an imperative class would be
+ * wiped by the next re-render and the section would stay invisible forever.
+ */
+function Reveal({
+  as: Tag = "section",
+  className = "",
+  children,
+}: {
+  as?: "section" | "div";
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const ref = useRef<HTMLElement>(null);
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node || shown) return;
+    // typeof rather than `in window`: the `in` check narrows window to never.
+    if (typeof IntersectionObserver === "undefined") {
+      // No observer support: show it rather than leaving content hidden.
+      const id = setTimeout(() => setShown(true), 0);
+      return () => clearTimeout(id);
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShown(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.06 },
+    );
+    observer.observe(node);
+
+    // Safety net: the observer only delivers while the page is actually
+    // rendering, so a tab that loads hidden (or any future regression here)
+    // could otherwise leave a whole section stuck at opacity 0. Content
+    // visibility must never depend on an animation firing.
+    const failsafe = setTimeout(() => setShown(true), 1600);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(failsafe);
+    };
+  }, [shown]);
+
+  return (
+    <Tag ref={ref as React.Ref<HTMLElement & HTMLDivElement>} className={`${className} reveal${shown ? " shown" : ""}`}>
+      {children}
+    </Tag>
+  );
+}
+
 function SettingTile({ line, detail = false }: { line: SettingLine; detail?: boolean }) {
   if (detail) {
     return (
@@ -216,6 +275,7 @@ export default function CamCueApp() {
     const timer = window.setTimeout(() => setToast(""), 2400);
     return () => window.clearTimeout(timer);
   }, [toast]);
+
 
   const camera = getCamera(cameraId) ?? cameras[0];
   const scene = getScene(sceneId) ?? scenes[0];
@@ -415,6 +475,7 @@ export default function CamCueApp() {
               </div>
               <div className="hero-device" aria-label={`Example ${brand.name} recommendation`}>
                 <div className="device-top"><span><span className="rec-dot" /> RECOMMENDED SETUP</span><span>4K · 60</span></div>
+                <div className="device-hero-art"><CameraArt category="action" /></div>
                 <div className="device-scene">
                   <span className="scene-code">OF</span>
                   <div><small>OFFSHORE FISHING</small><strong>Action 6</strong></div>
@@ -430,21 +491,21 @@ export default function CamCueApp() {
               </div>
             </section>
 
-            <div className="brand-strip">
+            <Reveal as="div" className="brand-strip">
               <small>Capability profiles for</small>
               {cameraBrands.map((name) => <b key={name}>{name}</b>)}
-            </div>
+            </Reveal>
 
-            <section className="natural-box">
+            <Reveal className="natural-box">
               <div className="natural-heading"><SlidersHorizontal size={20} /><div><strong>Describe the shot</strong><span>Use a sentence instead of the selectors.</span></div></div>
               <div className="natural-input">
                 <input value={naturalText} onChange={(event) => setNaturalText(event.target.value)} onKeyDown={(event) => event.key === "Enter" && parseNatural()} placeholder="Fishing from a boat tomorrow. Sunny, chest mount, for YouTube…" aria-label="Describe what you are shooting" />
                 <button onClick={parseNatural} disabled={!naturalText.trim()} aria-label="Build recommendation"><ArrowRight size={20} /></button>
               </div>
               <small>{brand.name} reads the details and applies the same compatibility rules.</small>
-            </section>
+            </Reveal>
 
-            <section className="home-section">
+            <Reveal className="home-section">
               <div className="section-heading"><div><span>COMMON SCENES</span><h2>Start with the shot</h2></div><button onClick={() => startFlow(2)}>View all scenes <ArrowRight size={16} /></button></div>
               <div className="popular-grid">
                 {POPULAR_SCENES.map((id, index) => {
@@ -453,9 +514,9 @@ export default function CamCueApp() {
                   return <button key={id} className={`popular-card tone-${item.group}`} onClick={() => { chooseScene(id); startFlow(3); }}><span className="scene-index">{String(index + 1).padStart(2, "0")}</span><strong>{item.name}</strong><small>Open setup <ChevronRight size={13} /></small></button>;
                 })}
               </div>
-            </section>
+            </Reveal>
 
-            <section className="how-band">
+            <Reveal className="how-band">
               <div className="how-inner">
                 <div className="how-copy">
                   <span>HOW IT WORKS</span>
@@ -474,17 +535,17 @@ export default function CamCueApp() {
                 <div><b>{recipes.length}</b><small>Recipes</small></div>
                 <div><b>0</b><small>Impossible settings</small></div>
               </div>
-            </section>
+            </Reveal>
 
             {saved.length > 0 && (
-              <section className="home-section">
+              <Reveal className="home-section">
                 <div className="section-heading"><div><span>RECENT</span><h2>Use a saved setup</h2></div><button onClick={() => navTo("bag")}>All saved setups <ArrowRight size={16} /></button></div>
                 <div className="shoot-again">
                   <div className="shoot-again-icon"><Camera size={22} /></div>
                   <div><small>LAST SAVED SETUP</small><strong>{saved[0].name}</strong><span>{lightOptions.find((item) => item.id === saved[0].scenario.light)?.name} · {platformOptions.find((item) => item.id === saved[0].scenario.platform)?.name ?? "Personal"}</span></div>
                   <button onClick={() => loadSaved(saved[0])}>Load <Play size={15} fill="currentColor" /></button>
                 </div>
-              </section>
+              </Reveal>
             )}
           </div>
         )}
@@ -590,10 +651,10 @@ export default function CamCueApp() {
               <div className="tweak-grid">{tweakOptions.map((item) => <button key={item.id} className={tweaks.includes(item.id) ? "selected" : ""} onClick={() => toggleTweak(item.id)}>{tweaks.includes(item.id) ? <Check size={15} /> : <SlidersHorizontal size={15} />}{item.name}</button>)}</div>
             </section>
 
-            <section className="mistake-card">
+            <Reveal className="mistake-card">
               <div className="mistake-title"><span>!</span><div><small>BEFORE RECORDING</small><h2>Things to check</h2></div></div>
               <div className="mistake-list">{result.mistakes.slice(0, 3).map((mistake, index) => <div key={mistake}><i>0{index + 1}</i><p>{mistake}</p></div>)}</div>
-            </section>
+            </Reveal>
 
             {result.advantages.length > 0 && <section className="advantage-card"><Star size={22} fill="currentColor" /><div><small>CAMERA ADVANTAGE</small><h3>{result.advantages[0].name}</h3><p>{result.advantages[0].desc}</p></div></section>}
 
@@ -652,7 +713,7 @@ export default function CamCueApp() {
           <div className="bag-view page-width">
             <section className="library-hero compact-hero"><span>YOUR KIT</span><h1>My Camera Bag</h1><p>Keep your gear and saved setups ready—even when the signal isn&apos;t.</p></section>
             <div className="bag-columns">
-              <section className="bag-panel"><div className="bag-panel-heading"><div><Camera size={19} /><span><small>OWNED GEAR</small><h2>My cameras</h2></span></div><b>{bag.length}</b></div><div className="bag-camera-list">{bag.map((id) => getCamera(id)).filter(Boolean).map((item) => item && <div key={item.id}><span className="mini-camera"><Camera size={21} /></span><div><strong>{item.manufacturer} {item.model}</strong><small>{item.category} · {item.confidence} profile</small></div><button onClick={() => { setCameraId(item.id); startFlow(2); }}>Use <ChevronRight size={15} /></button></div>)}</div><button className="add-gear" onClick={() => startFlow(1)}><Plus size={16} /> Add another camera</button></section>
+              <section className="bag-panel"><div className="bag-panel-heading"><div><Camera size={19} /><span><small>OWNED GEAR</small><h2>My cameras</h2></span></div><b>{bag.length}</b></div><div className="bag-camera-list">{bag.map((id) => getCamera(id)).filter(Boolean).map((item) => item && <div key={item.id}><span className={`mini-camera tone-${item.category}`}><CameraArt category={item.category} /></span><div><strong>{item.manufacturer} {item.model}</strong><small>{categoryLabels[item.category]} · {item.confidence} profile</small></div><button onClick={() => { setCameraId(item.id); startFlow(2); }}>Use <ChevronRight size={15} /></button></div>)}</div><button className="add-gear" onClick={() => startFlow(1)}><Plus size={16} /> Add another camera</button></section>
               <section className="bag-panel"><div className="bag-panel-heading"><div><Bookmark size={19} /><span><small>SAVED ON THIS DEVICE</small><h2>Saved setups</h2></span></div><b>{saved.length}</b></div>{saved.length === 0 ? <div className="empty-state"><Bookmark size={28} /><strong>No saved setups yet</strong><p>Get a recommendation, then save it here for one-tap access.</p><button onClick={() => startFlow(1)}>Get my first setup</button></div> : <div className="saved-list">{saved.map((item) => <div key={item.id}><span><Camera size={17} /></span><div><strong>{item.name}</strong><small>{lightOptions.find((option) => option.id === item.scenario.light)?.name} · {mountOptions.find((option) => option.id === item.scenario.mount)?.name}</small></div><button onClick={() => loadSaved(item)} aria-label={`Load ${item.name}`}><Play size={15} fill="currentColor" /></button><button className="remove-saved" onClick={() => setSaved((current) => current.filter((savedItem) => savedItem.id !== item.id))} aria-label={`Delete ${item.name}`}><X size={15} /></button></div>)}</div>}</section>
             </div>
             <section className="all-gear"><div className="section-heading"><div><span>SUPPORTED CAMERAS</span><h2>Add to your bag</h2></div></div><div className="camera-grid">{cameras.map((item) => <CameraCard key={item.id} item={item} selected={false} inBag={bag.includes(item.id)} onChoose={() => { setCameraId(item.id); startFlow(2); }} onBag={() => toggleBag(item.id)} />)}</div></section>
@@ -663,7 +724,7 @@ export default function CamCueApp() {
           <div className="learn-view page-width">
             <section className="library-hero"><span>PLAIN-LANGUAGE GUIDES</span><h1>Understand the setting.</h1><p>Short explanations for the controls that make a visible difference.</p></section>
             <div className="learn-grid">{learnCards.map(({ title, time, icon: Icon, text }) => <article key={title} className="learn-card"><div><Icon size={22} /><span>{time}</span></div><h2>{title}</h2><p>{text}</p></article>)}</div>
-            <section className="fps-lab"><div><span>QUICK VISUAL GUIDE</span><h2>Frame rate at a glance</h2><p>More frames make motion smoother—and give you more room to slow it down.</p></div><div className="fps-track">{[{ fps: 24, label: "Cinematic" }, { fps: 30, label: "Everyday" }, { fps: 60, label: "Smooth action" }, { fps: 120, label: "Slow motion" }].map((item) => <div key={item.fps}><span style={{ "--dots": item.fps / 12 } as React.CSSProperties}>{Array.from({ length: item.fps / 12 }).map((_, index) => <i key={index} />)}</span><strong>{item.fps}<small> FPS</small></strong><p>{item.label}</p></div>)}</div></section>
+            <Reveal className="fps-lab"><div><span>QUICK VISUAL GUIDE</span><h2>Frame rate at a glance</h2><p>More frames make motion smoother—and give you more room to slow it down.</p></div><div className="fps-track">{[{ fps: 24, label: "Cinematic" }, { fps: 30, label: "Everyday" }, { fps: 60, label: "Smooth action" }, { fps: 120, label: "Slow motion" }].map((item) => <div key={item.fps}><span style={{ "--dots": item.fps / 12 } as React.CSSProperties}>{Array.from({ length: item.fps / 12 }).map((_, index) => <i key={index} />)}</span><strong>{item.fps}<small> FPS</small></strong><p>{item.label}</p></div>)}</div></Reveal>
           </div>
         )}
       </main>
@@ -719,7 +780,10 @@ function CameraCard({ item, selected, inBag, onChoose, onBag }: { item: (typeof 
   return (
     <div className={`camera-card ${selected ? "selected" : ""}`}>
       <button className="camera-select" onClick={onChoose}>
-        <span className="camera-visual"><Camera size={26} /></span>
+        <span className={`camera-visual tone-${item.category}`}>
+          <CameraArt category={item.category} />
+          {item.popular && <span className="popular-pill">POPULAR</span>}
+        </span>
         <span className="camera-copy">
           <small>{item.manufacturer.toUpperCase()}</small>
           <strong>{item.model}</strong>
@@ -728,7 +792,6 @@ function CameraCard({ item, selected, inBag, onChoose, onBag }: { item: (typeof 
             {item.confidence === "unverified" && <b className="unverified-flag">NOT VERIFIED</b>}
           </em>
         </span>
-        {item.popular && <span className="popular-pill">POPULAR</span>}
         {selected && <span className="selected-check"><Check size={14} /></span>}
       </button>
       <button className={`heart-button ${inBag ? "saved" : ""}`} onClick={onBag} aria-label={inBag ? `Remove ${item.model} from bag` : `Add ${item.model} to bag`}><Heart size={16} fill={inBag ? "currentColor" : "none"} /></button>
