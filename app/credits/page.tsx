@@ -63,14 +63,16 @@ export default function CreditsPage() {
       <section>
         <h2>Imagery</h2>
         <p>
-          <strong>This site uses no photography.</strong> No stock images, no press imagery, no
-          manufacturer product shots, and no pictures of people, places or equipment. The camera
-          cards across all {cameras.length} profiles and the artwork behind all {scenes.length}{" "}
-          scenes are generated in code from the underlying data.
+          <strong>No stock photography, no press imagery and no manufacturer product shots are
+          used anywhere on this site.</strong> The camera cards across all {cameras.length}{" "}
+          profiles and the artwork behind all {scenes.length} scenes are generated in code from the
+          underlying data rather than illustrated with pictures.
         </p>
         <p>
-          The one exception is a single abstract graphic used as the home page banner. It depicts
-          nothing and identifies no one — it is colour and light.
+          The home page banner is a single AI-generated image. The people in it are not real
+          people, so nobody is depicted without their consent, and it is illustrative of the kind
+          of moment this site exists to help you capture rather than a photograph of anything that
+          happened.
         </p>
         <p>
           That is a deliberate choice rather than a limitation. Product photography assembled from

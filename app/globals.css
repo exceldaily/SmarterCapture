@@ -376,8 +376,11 @@ p { margin: 0; }
      banner artwork, then the generated gradients. If hero-banner.jpg is
      absent the browser simply skips that layer and the gradients show
      through, so the hero never renders bare. */
+  /* Tuned for a photographic banner, which averages ~122/255 luminance across
+     both halves. The old ramp bottomed out at 0.3, fine over near-black
+     artwork but not under the faint mono labels this hero uses. */
   background:
-    linear-gradient(100deg, rgba(10, 11, 12, 0.94) 0%, rgba(10, 11, 12, 0.7) 38%, rgba(10, 11, 12, 0.3) 100%),
+    linear-gradient(100deg, rgba(8, 9, 10, 0.93) 0%, rgba(8, 9, 10, 0.8) 40%, rgba(8, 9, 10, 0.62) 100%),
     url("/hero-banner.jpg") center / cover no-repeat,
     radial-gradient(120% 90% at 82% 8%, rgba(127, 216, 239, 0.16), transparent 58%),
     radial-gradient(90% 70% at 8% 100%, rgba(255, 74, 23, 0.16), transparent 60%),
@@ -485,12 +488,15 @@ p { margin: 0; }
 .trust-row svg { color: var(--aqua); }
 
 /* the floating "device" spec card */
+/* Sits over the banner, so it needs its own dark base rather than relying on
+   a white tint: over a bright photograph, translucent white turns the card
+   pale and its white text unreadable. */
 .hero-device {
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03));
-  backdrop-filter: blur(10px);
+  background: linear-gradient(180deg, rgba(10, 12, 14, 0.72), rgba(10, 12, 14, 0.6));
+  backdrop-filter: blur(14px);
   box-shadow: var(--shadow-lift);
   overflow: hidden;
 }
