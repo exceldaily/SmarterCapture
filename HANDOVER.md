@@ -40,16 +40,20 @@ Fixed in `app/globals.css`: `.camera-copy strong` no longer uses
 `white-space: nowrap` + ellipsis (it wraps to two lines), and `.camera-grid`
 minimum column width went 220px → 250px. **Verify this in the browser.**
 
-### 3. Push to GitHub — approved but NOT done
-The user approved pushing to the public repo `exceldaily/SmarterCapture`
-(https://github.com/exceldaily/SmarterCapture, empty, default branch `main`).
-Nothing has been pushed yet. The local git repo has 3 commits from earlier work
-and the current changes are uncommitted.
+### 3. Shipped — live at https://smartercapture.com
+- Repo: https://github.com/exceldaily/SmarterCapture (public, branch `main`)
+- Vercel project `smartercapture`, auto-deploys on push to `main`
+- Domain registered at Cloudflare Registrar, DNS in Cloudflare with the **proxy
+  off (grey cloud)** — the orange cloud stops Vercel issuing its certificate
+- Apex 308-redirects to `www`
+- Vercel flags "DNS Change Recommended" because the records use the legacy
+  `76.76.21.21` / `cname.vercel-dns.com` pair. Harmless; newer per-project
+  targets exist under "View DNS configuration" if the warning is worth clearing.
 
-### 4. Deploy
-Domain purchased: **smartercapture.com**. Not yet connected.
-The old plan (deploy under the Vercel `showcase` project at testswebsite.uk) is
-superseded by the dedicated repo + domain.
+Deploy gotcha worth remembering: `/build` was gitignored as an output directory,
+but `build/sites-vite-plugin.ts` is source that `vite.config.ts` imports, so
+clean checkouts failed type-checking. Git will not descend into an excluded
+directory, so the fix needs `/build/*` plus a negation, not `/build`.
 
 ### 5. Still unbuilt from the original brief
 - Shot List Builder ("Going offshore fishing tomorrow" → full shoot plan)
