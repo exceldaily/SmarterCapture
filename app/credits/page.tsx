@@ -48,9 +48,11 @@ export default function CreditsPage() {
           every recommendation rather than hidden.
         </p>
         <p>
-          Cameras marked <strong>not verified</strong> are listed with deliberately minimal
-          capabilities, because inventing a plausible-sounding specification is worse than
-          admitting we do not have one. The most recent review was {lastReview}.
+          A camera whose capabilities we cannot verify is <strong>not listed at all</strong>. It
+          stays on file, marked unverified and withheld, until its specification can be confirmed.
+          Showing it with a warning attached would put the burden on you to notice the warning, and
+          a recommendation is only worth as much as the data behind it. The most recent review was
+          {" "}{lastReview}.
         </p>
         <p>
           Specifications change with firmware. If something here contradicts your camera, your

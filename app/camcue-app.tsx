@@ -837,7 +837,7 @@ function CameraCard({ item, selected, inBag, onChoose, onBag }: { item: (typeof 
   return (
     <div className={`camera-card ${selected ? "selected" : ""}`}>
       <button className="camera-select" onClick={onChoose}>
-        <span className={`camera-visual tone-${item.category}${plate.pending ? " pending" : ""}`}>
+        <span className={`camera-visual tone-${item.category}`}>
           <span className="plate-hero">
             {plate.hero}
             {plate.heroSub && <i>{plate.heroSub}</i>}
@@ -852,7 +852,6 @@ function CameraCard({ item, selected, inBag, onChoose, onBag }: { item: (typeof 
           <strong>{item.model}</strong>
           <em>
             {categoryLabels[item.category]}
-            {item.confidence === "unverified" && <b className="unverified-flag">NOT VERIFIED</b>}
           </em>
           <span className="camera-sensor">{item.sensor}</span>
         </span>

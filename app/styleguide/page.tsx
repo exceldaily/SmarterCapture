@@ -16,7 +16,6 @@ const SAMPLES = [
   "sony-a7s-iii",
   "lumix-gh7",
   "nikon-z30",
-  "gopro-mission-1",
 ];
 
 export default function StyleguidePage() {

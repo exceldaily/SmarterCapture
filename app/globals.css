@@ -1243,7 +1243,9 @@ p { margin: 0; }
   white-space: nowrap;
 }
 
-/* Unverified profiles must not present themselves as data. */
+/* Unverified cameras are withheld from the product entirely, so no card ever
+   renders in this state. Kept for /styleguide, which can preview a withheld
+   profile while it is being checked. */
 .camera-visual.pending .plate-hero { color: rgba(255, 255, 255, 0.35); }
 .camera-visual.pending .plate-chips em {
   border-color: rgba(217, 148, 37, 0.55);
@@ -2298,20 +2300,6 @@ p { margin: 0; }
   color: var(--muted);
   font-size: 14px;
   text-align: center;
-}
-
-.unverified-flag {
-  display: inline-block;
-  margin-left: 7px;
-  padding: 1px 5px;
-  border-radius: 2px;
-  background: var(--warn);
-  color: #fff;
-  font-family: var(--font-mono);
-  font-size: 8px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  vertical-align: 1px;
 }
 
 /* --- data provenance ------------------------------------------------------- */

@@ -8,7 +8,8 @@ import { nikonCameras } from "./nikon";
 import { panasonicCameras } from "./panasonic";
 import { sonyCameras } from "./sony";
 
-export const cameras: CameraProfile[] = [
+/** Every profile on file, including ones not fit to ship. */
+const allProfiles: CameraProfile[] = [
   ...djiCameras,
   ...goproCameras,
   ...insta360Cameras,
@@ -18,6 +19,24 @@ export const cameras: CameraProfile[] = [
   ...fujifilmCameras,
   ...panasonicCameras,
 ];
+
+/**
+ * The cameras the product actually offers.
+ *
+ * Unverified profiles are withheld rather than shown with a warning. A
+ * recommendation is only worth anything if the capability data behind it is
+ * trustworthy, so a camera we cannot vouch for is better absent than present
+ * with a caveat the user has to notice and act on. Filtering here means a
+ * profile added as `unverified` later is withheld automatically.
+ */
+export const cameras: CameraProfile[] = allProfiles.filter(
+  (camera) => camera.confidence !== "unverified",
+);
+
+/** Profiles awaiting verification. Not shown in the product. */
+export const pendingCameras: CameraProfile[] = allProfiles.filter(
+  (camera) => camera.confidence === "unverified",
+);
 
 export function getCamera(id: string): CameraProfile | undefined {
   return cameras.find((camera) => camera.id === id);

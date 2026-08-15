@@ -9,7 +9,7 @@
  *   npx tsx scripts/validate.ts
  */
 
-import { cameras } from "../lib/camcue/data/cameras";
+import { cameras, pendingCameras } from "../lib/camcue/data/cameras";
 import { scenes } from "../lib/camcue/data/scenes";
 import { recipes } from "../lib/camcue/data/recipes";
 import { recommend } from "../lib/camcue/engine";
@@ -60,15 +60,13 @@ for (const cam of cameras) {
     }
   }
 
-  // Unverified profiles must stay minimal — no invented capabilities.
+  // The product must never offer a camera whose capabilities are unverified:
+  // a recommendation is only as trustworthy as the data behind it.
   if (cam.confidence === "unverified") {
-    if (cam.videoModes.length > 2 || cam.colorProfiles.some((p) => p.log)) {
-      fail(`${label}: unverified profile carries speculative capabilities`);
-    }
-    if (!cam.verifyNote) fail(`${label}: unverified profile has no verifyNote`);
+    fail(`${label}: unverified profile is being shipped — it must be withheld until verified`);
   }
 
-  if (!cam.officialSource && cam.confidence !== "unverified") {
+  if (!cam.officialSource) {
     warnings.push(`${label}: no officialSource recorded`);
   }
   if (!/^\d{4}-\d{2}-\d{2}$/.test(cam.lastVerified)) fail(`${label}: lastVerified is not an ISO date`);
@@ -154,6 +152,17 @@ for (const cam of cameras) {
   }
 }
 
+// ---------- 2b. withheld profiles ----------
+// These are not shipped, but they must still be honest: no invented modes,
+// and a note saying what needs checking.
+for (const cam of pendingCameras) {
+  const label = `${cam.manufacturer} ${cam.model} (withheld)`;
+  if (cam.videoModes.length > 2 || cam.colorProfiles.some((p) => p.log)) {
+    fail(`${label}: unverified profile carries speculative capabilities`);
+  }
+  if (!cam.verifyNote) fail(`${label}: unverified profile has no verifyNote`);
+}
+
 // ---------- 3. recipe audit ----------
 for (const recipe of recipes) {
   if (!cameras.some((c) => c.id === recipe.cameraId)) {
@@ -177,8 +186,8 @@ for (const cam of cameras) {
 }
 
 // ---------- report ----------
-console.log(`\nCamCue capability validation`);
-console.log(`  cameras:      ${cameras.length}`);
+console.log(`\nSmarter Capture capability validation`);
+console.log(`  cameras:      ${cameras.length} shipped, ${pendingCameras.length} withheld`);
 console.log(`  scenes:       ${scenes.length}`);
 console.log(`  combinations: ${checks}`);
 console.log(`  warnings:     ${warnings.length}`);

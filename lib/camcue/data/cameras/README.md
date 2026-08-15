@@ -12,7 +12,12 @@ Every profile carries a `confidence` value. It is shown to the user.
 | --- | --- |
 | `verified` | Long-shipping model with stable, unambiguous, widely published specifications. Capability matrix believed correct as written. |
 | `high` | Compiled from published manufacturer specifications. Believed correct, but not re-checked against the newest firmware release. |
-| `unverified` | Insufficient reliable information. Capabilities are deliberately minimal and the UI warns the user. Never expand an `unverified` profile by guessing. |
+| `unverified` | Insufficient reliable information. **The camera is withheld from the product entirely** — `index.ts` filters it out of `cameras`, and `npm run validate` fails if one is shipped. Keep its capabilities deliberately minimal and never expand it by guessing. |
+
+A withheld profile stays on file so the research is not lost and so it is
+obvious what still needs checking. Promote it to `high` only once its
+resolution/frame-rate matrix has been confirmed against manufacturer
+documentation.
 
 ## Hard rules
 
