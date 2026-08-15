@@ -1,0 +1,45 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowLeft, Camera, ShieldCheck } from "lucide-react";
+import { brand } from "@/lib/camcue/brand";
+import { GearCatalog } from "./gear-catalog";
+
+export const metadata: Metadata = {
+  title: `Suggested Accessories — ${brand.name}`,
+  description: "Useful, compatibility-aware gear for getting more out of an action camera.",
+};
+
+export default function GearPage() {
+  return (
+    <div className="gear-page">
+      <header className="gear-site-header">
+        <Link href="/" className="gear-wordmark"><span className="gear-mark" />{brand.wordmark}</Link>
+        <nav aria-label="Gear navigation"><Link href="/"><ArrowLeft size={15} /> Camera assistant</Link><Link href="/gear" className="active">Gear</Link></nav>
+      </header>
+
+      <main className="page-width">
+        <section className="gear-hero">
+          <div>
+            <span>CURATED FOR THE SHOT</span>
+            <h1>Suggested Accessories</h1>
+            <p>Useful gear for getting more out of your action camera.</p>
+          </div>
+          <aside>
+            <ShieldCheck size={22} />
+            <div><strong>Evidence before checkout</strong><p>Compatibility comes from the source listing. Price and shipping stay unpublished until the one-unit economics are confirmed.</p></div>
+          </aside>
+        </section>
+
+        <section className="gear-intro-strip">
+          <span><Camera size={16} /> 10 focused products</span>
+          <span>No batteries, filters or model-specific fit guesswork</span>
+          <span>Neutral visuals until reseller image rights are approved</span>
+        </section>
+
+        <GearCatalog />
+      </main>
+
+      <footer className="gear-footer"><span>{brand.domain}</span><p>The camera assistant remains the product. Gear is an optional, low-pressure recommendation.</p></footer>
+    </div>
+  );
+}

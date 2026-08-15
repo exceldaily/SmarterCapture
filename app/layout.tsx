@@ -71,7 +71,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${archivo.variable} ${inter.variable} ${jetbrains.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${archivo.variable} ${inter.variable} ${jetbrains.variable}`}>
       <body>{children}</body>
     </html>
   );

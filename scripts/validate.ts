@@ -13,6 +13,11 @@ import { cameras, pendingCameras } from "../lib/camcue/data/cameras";
 import { scenes } from "../lib/camcue/data/scenes";
 import { recipes } from "../lib/camcue/data/recipes";
 import { recommend } from "../lib/camcue/engine";
+import { accessoryProducts } from "../lib/accessories/catalog";
+import { accessoryLaunchPolicies, assessAccessoryLaunch } from "../lib/accessories/commerce";
+import { recommendAccessories } from "../lib/accessories/recommend";
+import { accessorySourcingRecords } from "../lib/accessories/sourcing";
+import { accessorySampleQueue, buildSupplierInquiry, launchMarkets } from "../lib/accessories/verification";
 import { lightOptions, mountOptions } from "../lib/camcue/data/options";
 import type { LightId, MountId, Scenario } from "../lib/camcue/types";
 
@@ -185,11 +190,86 @@ for (const cam of cameras) {
   }
 }
 
+// ---------- 5. accessory sourcing + recommendation audit ----------
+const accessoryIds = new Set<string>();
+const accessorySlugs = new Set<string>();
+const sourcingProductIds = new Set(accessorySourcingRecords.map((record) => record.productId));
+
+for (const product of accessoryProducts) {
+  if (accessoryIds.has(product.id)) fail(`Accessory has duplicate id "${product.id}"`);
+  if (accessorySlugs.has(product.slug)) fail(`Accessory has duplicate slug "${product.slug}"`);
+  accessoryIds.add(product.id);
+  accessorySlugs.add(product.slug);
+
+  if (!sourcingProductIds.has(product.id)) fail(`${product.name}: no sourcing record`);
+  if (product.catalogStatus === "ready" && product.retailPriceUsd === null) {
+    fail(`${product.name}: marked ready without an approved retail price`);
+  }
+  if (product.catalogStatus !== "ready" && product.retailPriceUsd !== null) {
+    fail(`${product.name}: carries a public retail price before it is ready`);
+  }
+  const launch = assessAccessoryLaunch(product.id);
+  if (product.catalogStatus !== "ready" && launch.purchasable) {
+    fail(`${product.name}: checkout gate opened before the catalog item was ready`);
+  }
+  if (product.catalogStatus === "ready" && !launch.purchasable) {
+    fail(`${product.name}: marked ready while checkout launch gates remain: ${launch.blockers.join("; ")}`);
+  }
+  if (product.universal && /dependent|supplier/i.test(product.mountStandard)) {
+    fail(`${product.name}: universal badge is attached to an unverified mount description`);
+  }
+  for (const id of product.recommendationSceneIds) {
+    if (!sceneIds.has(id)) fail(`${product.name}: recommendation references unknown scene "${id}"`);
+  }
+}
+
+for (const [productId, policy] of Object.entries(accessoryLaunchPolicies)) {
+  if (!policy) continue;
+  if (!accessoryIds.has(productId)) fail(`Launch policy points at unknown accessory "${productId}"`);
+  if (policy.productId !== productId) fail(`${productId}: launch policy productId does not match its key`);
+  if (policy.allowedCountries.length === 0) fail(`${productId}: launch policy has no verified shipping countries`);
+  if (policy.deliveryBusinessDays.minimum < 1 || policy.deliveryBusinessDays.maximum < policy.deliveryBusinessDays.minimum) {
+    fail(`${productId}: launch delivery range is invalid`);
+  }
+}
+
+for (const item of accessorySampleQueue) {
+  const inquiry = buildSupplierInquiry(item.product.id);
+  if (!inquiry.includes(item.supplier.supplierProductId)) fail(`${item.product.name}: supplier inquiry omits the exact product ID`);
+  for (const market of launchMarkets) {
+    if (!inquiry.includes(market.testDestination)) fail(`${item.product.name}: supplier inquiry omits ${market.country}`);
+  }
+}
+
+for (const record of accessorySourcingRecords) {
+  if (!accessoryIds.has(record.productId)) fail(`Sourcing record points at unknown product "${record.productId}"`);
+  if (!record.candidates.length) fail(`${record.productId}: no supplier candidate`);
+  for (const source of record.candidates) {
+    if (!/^https:\/\/www\.alibaba\.com\/product-detail\//.test(source.alibabaProductUrl)) {
+      fail(`${record.productId}: supplier source is not an exact Alibaba product-detail URL`);
+    }
+  }
+  if (record.recommendedRetailPriceUsd !== null && record.estimatedLandedCostUsd === null) {
+    fail(`${record.productId}: retail price approved without a landed cost`);
+  }
+}
+
+for (const scene of scenes) {
+  for (const mount of mounts) {
+    const suggestions = recommendAccessories(scene, mount);
+    if (suggestions.length > 3) fail(`${scene.id}/${mount}: more than 3 accessory suggestions`);
+    if (suggestions.some((product) => product.catalogStatus === "future-bulk")) {
+      fail(`${scene.id}/${mount}: future-bulk product appears in customer recommendations`);
+    }
+  }
+}
+
 // ---------- report ----------
 console.log(`\nSmarter Capture capability validation`);
 console.log(`  cameras:      ${cameras.length} shipped, ${pendingCameras.length} withheld`);
 console.log(`  scenes:       ${scenes.length}`);
 console.log(`  combinations: ${checks}`);
+console.log(`  accessories:  ${accessoryProducts.length} products, ${accessorySourcingRecords.length} sourcing records`);
 console.log(`  warnings:     ${warnings.length}`);
 console.log(`  failures:     ${problems.length}\n`);
 

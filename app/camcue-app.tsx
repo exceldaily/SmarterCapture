@@ -42,6 +42,8 @@ import {
   Zap,
 } from "lucide-react";
 import { recommend, whatIfAnswer, whatIfOptions } from "@/lib/camcue/engine";
+import { recommendAccessories } from "@/lib/accessories/recommend";
+import { AccessoryVisual } from "@/app/gear/accessory-visual";
 import { cameraSpecPlate } from "@/lib/camcue/spec-plate";
 import { brand } from "@/lib/camcue/brand";
 import { cameraBrands, cameras, categoryLabels, categoryOrder, getCamera } from "@/lib/camcue/data/cameras";
@@ -83,7 +85,7 @@ interface SavedSetup {
 }
 
 const DEFAULT_CAMERA = "dji-osmo-action-6";
-const POPULAR_SCENES = ["fishing", "walking-tour", "night", "motorcycle", "talking-head", "cinematic"];
+const POPULAR_SCENES = ["motorcycle", "walking-tour", "night", "talking-head", "cinematic", "vlog"];
 
 const learnCards = [
   { title: "24 vs 30 vs 60 vs 120 FPS", time: "45 sec", icon: Film, text: "24 feels cinematic. 30 is the safe all-rounder. 60 keeps action smooth. 120 is for deliberate slow motion—and needs lots of light." },
@@ -246,10 +248,10 @@ export default function CamCueApp() {
   const [view, setView] = useState<View>("home");
   const [step, setStep] = useState(1);
   const [cameraId, setCameraId] = useState(DEFAULT_CAMERA);
-  const [sceneId, setSceneId] = useState("fishing");
-  const [light, setLight] = useState<LightId>("bright-sun");
-  const [movement, setMovement] = useState<MovementId>("fast");
-  const [mount, setMount] = useState<MountId>("chest");
+  const [sceneId, setSceneId] = useState("walking-tour");
+  const [light, setLight] = useState<LightId>("partly-cloudy");
+  const [movement, setMovement] = useState<MovementId>("slow");
+  const [mount, setMount] = useState<MountId>("handheld");
   const [platform, setPlatform] = useState<PlatformId>("youtube");
   const [editing, setEditing] = useState<EditingId>("none");
   const [priority, setPriority] = useState<PriorityId>("balanced");
@@ -317,6 +319,7 @@ export default function CamCueApp() {
   }), [cameraId, sceneId, light, movement, mount, platform, editing, priority, audioPref, accessories, tweaks]);
   const result = useMemo(() => recommend(camera, scene, scenario), [camera, scene, scenario]);
   const whatIfChoices = useMemo(() => whatIfOptions(camera, result), [camera, result]);
+  const suggestedAccessories = useMemo(() => recommendAccessories(scene, mount), [scene, mount]);
 
   const filteredCameras = useMemo(() => cameras.filter((item) => {
     if (!fuzzyMatch(`${item.manufacturer} ${item.model} ${item.category}`, cameraQuery)) return false;
@@ -473,6 +476,7 @@ export default function CamCueApp() {
         <nav className="desktop-nav" aria-label="Main navigation">
           <button className={view === "home" ? "active" : ""} onClick={() => navTo("home")}>Home</button>
           <button className={view === "recipes" ? "active" : ""} onClick={() => navTo("recipes")}>Recipes</button>
+          <Link href="/gear">Gear</Link>
           <button className={view === "learn" ? "active" : ""} onClick={() => navTo("learn")}>Learn</button>
         </nav>
         <button className="bag-button" onClick={() => navTo("bag")}><Camera size={17} /><span>My Camera Bag</span><b>{bag.length}</b></button>
@@ -500,8 +504,8 @@ export default function CamCueApp() {
                 <div className="device-top"><span><span className="rec-dot" /> RECOMMENDED SETUP</span><span>4K · 60</span></div>
                 
                 <div className="device-scene">
-                  <span className="scene-code">OF</span>
-                  <div><small>OFFSHORE FISHING</small><strong>Action 6</strong></div>
+                  <span className="scene-code">MC</span>
+                  <div><small>MOTORCYCLE POV</small><strong>Action 6</strong></div>
                   <BadgeCheck className="verified-icon" size={21} />
                 </div>
                 <div className="device-settings">
@@ -510,7 +514,7 @@ export default function CamCueApp() {
                   <div><small>STABILIZATION</small><b>RockSteady</b></div>
                   <div><small>FIELD OF VIEW</small><b>Natural Wide</b></div>
                 </div>
-                <div className="device-tip"><Lightbulb size={17} /><span><small>DON&apos;T FORGET</small>Turn on Pre-Record before the first cast.</span></div>
+                <div className="device-tip"><Lightbulb size={17} /><span><small>DON&apos;T FORGET</small>Turn on Wind Reduction before you set off.</span></div>
               </div>
             </section>
 
@@ -523,7 +527,7 @@ export default function CamCueApp() {
             <Reveal className="natural-box">
               <div className="natural-heading"><SlidersHorizontal size={20} /><div><strong>Describe the shot</strong><span>Use a sentence instead of the selectors.</span></div></div>
               <div className="natural-input">
-                <input value={naturalText} onChange={(event) => setNaturalText(event.target.value)} onKeyDown={(event) => event.key === "Enter" && parseNatural()} placeholder="Fishing from a boat tomorrow. Sunny, chest mount, for YouTube…" aria-label="Describe what you are shooting" />
+                <input value={naturalText} onChange={(event) => setNaturalText(event.target.value)} onKeyDown={(event) => event.key === "Enter" && parseNatural()} placeholder="Riding the coast road at golden hour. Helmet cam, for YouTube…" aria-label="Describe what you are shooting" />
                 <button onClick={parseNatural} disabled={!naturalText.trim()} aria-label="Build recommendation"><ArrowRight size={20} /></button>
               </div>
               <small>{brand.name} reads the details and applies the same compatibility rules.</small>
@@ -626,7 +630,7 @@ export default function CamCueApp() {
             {step === 2 && (
               <section className="flow-panel">
                 <div className="flow-heading"><span className="step-icon"><Compass size={23} /></span><div><h1>What are you shooting?</h1><p>Pick the closest match. You can fine-tune it next.</p></div></div>
-                <label className="search-field"><Search size={18} /><input value={sceneQuery} onChange={(event) => setSceneQuery(event.target.value)} placeholder="Search fishing, night, vlog…" /></label>
+                <label className="search-field"><Search size={18} /><input value={sceneQuery} onChange={(event) => setSceneQuery(event.target.value)} placeholder="Search travel, night, vlog…" /></label>
                 {!sceneQuery && <div className="group-tabs" role="tablist">{sceneGroups.map((group) => <button key={group.id} className={sceneGroup === group.id ? "active" : ""} onClick={() => setSceneGroup(group.id)}>{group.name}</button>)}</div>}
                 <div className="scene-grid">{filteredScenes.map((item, index) => <button key={item.id} className={`scene-card ${sceneId === item.id ? "selected" : ""}`} onClick={() => chooseScene(item.id)}><span className="scene-card-top"><span className="scene-monogram">{item.name.split(/\s|\//).filter(Boolean).slice(0, 2).map((word) => word[0]).join("").toUpperCase()}</span><span className="scene-frame-no">{String(index + 1).padStart(2, "0")}</span></span><strong>{item.name}</strong><span className="scene-tech light">{sceneTechLine(item).slice(0, 2).map((token) => <em key={token}>{token}</em>)}</span>{sceneId === item.id && <i><Check size={13} /></i>}</button>)}</div>
                 <div className="flow-footer"><span>{scene.name} selected</span><button className="primary-button" onClick={() => setStep(3)}>Add conditions <ArrowRight size={18} /></button></div>
@@ -698,6 +702,21 @@ export default function CamCueApp() {
             </Reveal>
 
             {result.advantages.length > 0 && <section className="advantage-card"><Star size={22} fill="currentColor" /><div><small>CAMERA ADVANTAGE</small><h3>{result.advantages[0].name}</h3><p>{result.advantages[0].desc}</p></div></section>}
+
+            {suggestedAccessories.length > 0 && (
+              <section className="result-section result-gear-section">
+                <div className="result-section-heading"><div><span>OPTIONAL GEAR</span><h2>Suggested Accessories</h2></div><p>Only items that fit this shot. Maximum three.</p></div>
+                <div className="result-gear-grid">
+                  {suggestedAccessories.map((product) => (
+                    <article key={product.id}>
+                      <AccessoryVisual product={product} compact />
+                      <div><small>{product.category}</small><h3>{product.name}</h3><p>{product.recommendationReason}</p><Link href={`/gear/${product.slug}`}>View <ChevronRight size={14} /></Link></div>
+                    </article>
+                  ))}
+                </div>
+                <p className="result-gear-note"><ShieldCheck size={15} /> No item is buyable until its exact one-unit cost, shipping and sample quality are verified.</p>
+              </section>
+            )}
 
             <section className="result-section pro-section">
               <button className="pro-toggle" onClick={() => setShowPro(!showPro)}><span><Settings2 size={19} /><span><strong>Show pro settings</strong><small>Every relevant setting, explained simply</small></span></span><ChevronDown size={19} className={showPro ? "rotated" : ""} /></button>
@@ -782,6 +801,7 @@ export default function CamCueApp() {
               <h3>Product</h3>
               <button onClick={() => startFlow(1)}>Get my settings</button>
               <button onClick={() => navTo("recipes")}>Recipes</button>
+              <Link href="/gear">Suggested accessories</Link>
               <button onClick={() => navTo("bag")}>My camera bag</button>
               <button onClick={() => navTo("learn")}>Learn</button>
             </div>
@@ -827,7 +847,7 @@ export default function CamCueApp() {
         <button className={view === "recipes" ? "active" : ""} onClick={() => navTo("recipes")}><Bookmark size={20} /><span>Recipes</span></button>
         <button className="mobile-shoot" onClick={() => startFlow(1)}><span><Aperture size={24} /></span><small>Shoot</small></button>
         <button className={view === "bag" ? "active" : ""} onClick={() => navTo("bag")}><Camera size={20} /><span>Bag</span></button>
-        <button className={view === "learn" ? "active" : ""} onClick={() => navTo("learn")}><Lightbulb size={20} /><span>Learn</span></button>
+        <Link href="/gear"><Package size={20} /><span>Gear</span></Link>
       </nav>
     </div>
   );

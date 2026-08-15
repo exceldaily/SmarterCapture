@@ -1,0 +1,92 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ArrowLeft, BadgeCheck, CircleAlert, Clock3, Package, ShieldCheck } from "lucide-react";
+import { accessoryProducts, getAccessory } from "@/lib/accessories/catalog";
+import { assessAccessoryLaunch } from "@/lib/accessories/commerce";
+import { brand } from "@/lib/camcue/brand";
+import { AccessoryVisual } from "../accessory-visual";
+
+export function generateStaticParams() {
+  return accessoryProducts.map((product) => ({ slug: product.slug }));
+}
+
+export async function generateMetadata({ params }: PageProps<"/gear/[slug]">): Promise<Metadata> {
+  const { slug } = await params;
+  const product = getAccessory(slug);
+  return product
+    ? { title: `${product.name} — ${brand.name}`, description: product.description }
+    : { title: `Accessory not found — ${brand.name}` };
+}
+
+export default async function AccessoryPage({ params }: PageProps<"/gear/[slug]">) {
+  const { slug } = await params;
+  const product = getAccessory(slug);
+  if (!product) notFound();
+
+  const isReady = assessAccessoryLaunch(product.id).purchasable;
+
+  return (
+    <div className="gear-page">
+      <header className="gear-site-header">
+        <Link href="/" className="gear-wordmark"><span className="gear-mark" />{brand.wordmark}</Link>
+        <nav aria-label="Gear navigation"><Link href="/gear"><ArrowLeft size={15} /> All gear</Link><Link href="/" >Camera assistant</Link></nav>
+      </header>
+
+      <main className="product-page page-width">
+        <div className="product-breadcrumb"><Link href="/gear">Suggested Accessories</Link><span>/</span><span>{product.name}</span></div>
+        <section className="product-hero">
+          <AccessoryVisual product={product} />
+          <div className="product-summary">
+            <span className="product-category">{product.category}</span>
+            <h1>{product.name}</h1>
+            <p>{product.description}</p>
+            {product.universal && <div className="product-universal"><BadgeCheck size={17} /> Universal action-camera mount</div>}
+            <div className="product-price">
+              {isReady ? <strong>${product.retailPriceUsd!.toFixed(2)}</strong> : <strong>Price pending verification</strong>}
+              <small>{isReady ? "Shipping calculated for the destination" : "Not available to buy yet"}</small>
+            </div>
+            <form method="post" action="/api/accessories/checkout">
+              <input type="hidden" name="productId" value={product.id} />
+              <input type="hidden" name="quantity" value="1" />
+              <button className="product-buy" type="submit" disabled={!isReady}>{isReady ? "Buy accessory" : "Checkout opens after verification"}</button>
+            </form>
+            {!isReady && <p className="product-gate"><ShieldCheck size={16} /> We are confirming the exact one-unit cost, delivery window and sample quality before accepting money.</p>}
+          </div>
+        </section>
+
+        <div className="product-details-grid">
+          <section>
+            <span>GREAT FOR</span>
+            <div className="product-tags">{product.useCases.map((item) => <i key={item}>{item}</i>)}</div>
+          </section>
+          <section>
+            <span>COMPATIBILITY</span>
+            <h2>{product.mountStandard}</h2>
+            <ul>{product.brandsSupported.map((item) => <li key={item}>{item}</li>)}</ul>
+            <p>{product.compatibilityNote}</p>
+          </section>
+          <section>
+            <span>WHAT&apos;S INCLUDED</span>
+            <ul>{product.includedItems.map((item) => <li key={item}>{item}</li>)}</ul>
+            {product.material && <p><strong>Material:</strong> {product.material}</p>}
+          </section>
+          <section>
+            <span>IMPORTANT NOTES</span>
+            <ul>{product.warnings.map((item) => <li key={item}><CircleAlert size={15} />{item}</li>)}</ul>
+          </section>
+        </div>
+
+        <section className="product-shipping-note">
+          <Clock3 size={21} />
+          <div><span>SHIPPING + RETURNS</span><h2>Confirmed before sale, not guessed.</h2><p>Destination-specific shipping, delivery timing and the return process will appear here only after the supplier route is verified. International supplier fulfillment can occasionally be delayed, so the checkout estimate must be based on the actual destination.</p></div>
+        </section>
+
+        <section className="product-recommendation-note">
+          <Package size={20} />
+          <div><span>WHY SMARTER CAPTURE MAY SUGGEST IT</span><p>{product.recommendationReason}</p></div>
+        </section>
+      </main>
+    </div>
+  );
+}
