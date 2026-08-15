@@ -1,6 +1,6 @@
 # Smarter Capture — handover
 
-Last session: 2026-08-15. Project lives at `C:\Users\ADMIN\Desktop\camcue`
+Last session: 2026-08-15 (evening). Project lives at `C:\Users\ADMIN\Desktop\camcue`
 (folder name is still `camcue`; the product was renamed to **Smarter Capture**).
 
 Run it: `npm run dev` → http://localhost:3000
@@ -120,3 +120,30 @@ scripts/validate.ts capability validator
 The engine rule that matters: it decides the *ideal* way to shoot first, then
 fits that to the camera. It must never emit a mode the camera cannot select —
 that is what `scripts/validate.ts` protects.
+
+
+---
+
+## 2026-08-15 evening — storefront shipped, fishing de-featured
+
+- /gear storefront + admin + Stripe/webhook scaffolding (from the parallel
+  session) reviewed, preserved, committed and deployed.
+- Orders live in the shared **OrbitStack** Supabase project (ref
+  pfagkivkytrvbkhsulvo), schema `smartercapture`, per the project's
+  one-schema-per-app convention.
+- Connection is a **direct Postgres pool** as role `smartercapture_app`
+  (select/insert/update + execute only, no delete), via the IPv4 pooler
+  aws-0-us-east-2.pooler.supabase.com:6543. No platform service key exists in
+  this deployment; PostgREST does not expose the schema.
+- **No accounts, on purpose**: Supabase Auth is project-wide, so logins here
+  would share WanderBites' user pool. The site stays account-free.
+- Admin Basic-auth credentials + DATABASE_URL are in `.env.local`
+  (gitignored) and in Vercel production env (sensitive).
+- Live-verified: /gear 200, admin 401 unauthenticated / 200 authenticated with
+  "connection is ready, no paid orders", checkout 503 with Stripe unset,
+  order function round-trip + idempotent replay tested against production and
+  cleaned up (found+fixed a plpgsql ON CONFLICT/OUT-param collision).
+- Fishing de-featured: motorcycle POV hero, neutral defaults/placeholders,
+  8 fishing recipes removed (31 remain). The fishing scene itself remains.
+- Still pending: Stripe keys (checkout stays gated), admin write controls,
+  transactional email.
