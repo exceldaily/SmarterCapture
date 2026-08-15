@@ -840,6 +840,27 @@ p { margin: 0; }
    frame number and a technical readout. It reads as photographic without
    pretending to be a photograph. */
 
+/* Scene artwork sits under every piece of frame chrome. z-index 0 keeps it
+   below the ::after scrim (z 1), the perforations (z 2) and the text (z 3). */
+.scene-photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.popular-card:hover .scene-photo { transform: scale(1.05); }
+
+/* With artwork present, the flat tone gradient underneath is redundant and
+   the scrim has to work harder for the title to hold over a busy image. */
+.popular-card.has-photo::before { opacity: 0; }
+.popular-card.has-photo::after {
+  background: linear-gradient(180deg, rgba(6, 8, 9, 0.32) 0%, rgba(6, 8, 9, 0.5) 52%, rgba(6, 8, 9, 0.9) 100%);
+}
+
 .frame-perf {
   position: absolute;
   z-index: 2;

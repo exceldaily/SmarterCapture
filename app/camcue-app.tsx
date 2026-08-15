@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   Aperture,
@@ -46,6 +47,7 @@ import { cameraSpecPlate } from "@/lib/camcue/spec-plate";
 import { brand } from "@/lib/camcue/brand";
 import { cameraBrands, cameras, categoryLabels, categoryOrder, getCamera } from "@/lib/camcue/data/cameras";
 import { recipes, type Recipe } from "@/lib/camcue/data/recipes";
+import { hasScenePhoto, scenePhotoPath } from "@/lib/camcue/data/scene-photos";
 import { getScene, sceneGroups, scenes } from "@/lib/camcue/data/scenes";
 import {
   accessoryOptions,
@@ -538,9 +540,20 @@ export default function CamCueApp() {
                   return (
                     <button
                       key={id}
-                      className={`popular-card tone-${item.group}`}
+                      className={`popular-card tone-${item.group}${hasScenePhoto(id) ? " has-photo" : ""}`}
                       onClick={() => { chooseScene(id); startFlow(3); }}
                     >
+                      {hasScenePhoto(id) && (
+                        <Image
+                          className="scene-photo"
+                          src={scenePhotoPath(id)}
+                          alt=""
+                          aria-hidden="true"
+                          fill
+                          sizes="(max-width: 700px) 90vw, 20vw"
+                          priority={index < 2}
+                        />
+                      )}
                       <span className="frame-perf" aria-hidden="true" />
                       <span className="scene-index">{String(index + 1).padStart(2, "0")}<i>A</i></span>
                       <span className="frame-edge" aria-hidden="true">{item.group.toUpperCase()}</span>
