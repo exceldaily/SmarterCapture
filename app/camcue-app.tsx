@@ -41,7 +41,8 @@ import {
   Zap,
 } from "lucide-react";
 import { recommend, whatIfAnswer, whatIfOptions } from "@/lib/camcue/engine";
-import { cameras, getCamera } from "@/lib/camcue/data/cameras";
+import { brand } from "@/lib/camcue/brand";
+import { cameraBrands, cameras, categoryLabels, categoryOrder, getCamera } from "@/lib/camcue/data/cameras";
 import { recipes, type Recipe } from "@/lib/camcue/data/recipes";
 import { getScene, sceneGroups, scenes } from "@/lib/camcue/data/scenes";
 import {
@@ -129,9 +130,9 @@ function CamMark() {
 
 function Brand({ compact = false }: { compact?: boolean }) {
   return (
-    <button className="brand" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="CamCue home">
+    <button className="brand" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label={`${brand.name} home`}>
       <CamMark />
-      <span>CAMCUE</span>
+      <span>{brand.wordmark}</span>
       {!compact && <small>SHOT SETTINGS</small>}
     </button>
   );
@@ -174,6 +175,7 @@ export default function CamCueApp() {
   const [accessories, setAccessories] = useState<AccessoryId[]>([]);
   const [tweaks, setTweaks] = useState<TweakId[]>([]);
   const [cameraQuery, setCameraQuery] = useState("");
+  const [cameraFilter, setCameraFilter] = useState<string>("all");
   const [sceneQuery, setSceneQuery] = useState("");
   const [sceneGroup, setSceneGroup] = useState("outdoors");
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -233,9 +235,12 @@ export default function CamCueApp() {
   const result = useMemo(() => recommend(camera, scene, scenario), [camera, scene, scenario]);
   const whatIfChoices = useMemo(() => whatIfOptions(camera, result), [camera, result]);
 
-  const filteredCameras = useMemo(() => cameras.filter((item) =>
-    fuzzyMatch(`${item.manufacturer} ${item.model} ${item.category}`, cameraQuery),
-  ), [cameraQuery]);
+  const filteredCameras = useMemo(() => cameras.filter((item) => {
+    if (!fuzzyMatch(`${item.manufacturer} ${item.model} ${item.category}`, cameraQuery)) return false;
+    if (cameraQuery || cameraFilter === "all") return true;
+    if (cameraFilter.startsWith("brand:")) return item.manufacturer === cameraFilter.slice(6);
+    return item.category === cameraFilter;
+  }), [cameraQuery, cameraFilter]);
 
   const filteredScenes = useMemo(() => scenes.filter((item) => {
     if (sceneQuery) return fuzzyMatch(`${item.name} ${item.group}`, sceneQuery);
@@ -363,7 +368,7 @@ export default function CamCueApp() {
     const shareText = `CAMCUE RECIPE\n${headline}\n\n${body}`;
     try {
       const useNativeShare = "share" in navigator;
-      if (useNativeShare) await navigator.share({ title: `${scene.name} CamCue Recipe`, text: shareText });
+      if (useNativeShare) await navigator.share({ title: `${scene.name} ${brand.name} Recipe`, text: shareText });
       else await navigator.clipboard.writeText(shareText);
       setToast(useNativeShare ? "Share sheet opened" : "Settings copied");
     } catch {
@@ -395,9 +400,9 @@ export default function CamCueApp() {
           <div className="home-view page-width">
             <section className="hero">
               <div className="hero-copy">
-                <div className="eyebrow"><span className="rec-dot" /> A PRACTICAL CAMERA GUIDE</div>
-                <h1>Camera settings for the shot in front of you.</h1>
-                <p>Choose your camera, describe the scene and get a setup that works with the gear you actually own.</p>
+                <div className="eyebrow"><span className="rec-dot" /> {cameras.length} CAMERAS · CAPABILITY CHECKED</div>
+                <h1>Know exactly<br />how to <em>shoot it.</em></h1>
+                <p>Tell {brand.name} what you&apos;re filming. You get the resolution, frame rate, stabilization and everything else — checked against the exact camera in your hand.</p>
                 <div className="hero-actions">
                   <button className="primary-button" onClick={() => startFlow(1)}>Choose a camera <ArrowRight size={19} /></button>
                   <button className="secondary-button" onClick={() => navTo("bag")}><Camera size={18} /> My camera bag</button>
@@ -408,7 +413,7 @@ export default function CamCueApp() {
                   <span><CircleCheck size={15} /> No login needed</span>
                 </div>
               </div>
-              <div className="hero-device" aria-label="Example CamCue recommendation">
+              <div className="hero-device" aria-label={`Example ${brand.name} recommendation`}>
                 <div className="device-top"><span><span className="rec-dot" /> RECOMMENDED SETUP</span><span>4K · 60</span></div>
                 <div className="device-scene">
                   <span className="scene-code">OF</span>
@@ -425,13 +430,18 @@ export default function CamCueApp() {
               </div>
             </section>
 
+            <div className="brand-strip">
+              <small>Capability profiles for</small>
+              {cameraBrands.map((name) => <b key={name}>{name}</b>)}
+            </div>
+
             <section className="natural-box">
               <div className="natural-heading"><SlidersHorizontal size={20} /><div><strong>Describe the shot</strong><span>Use a sentence instead of the selectors.</span></div></div>
               <div className="natural-input">
                 <input value={naturalText} onChange={(event) => setNaturalText(event.target.value)} onKeyDown={(event) => event.key === "Enter" && parseNatural()} placeholder="Fishing from a boat tomorrow. Sunny, chest mount, for YouTube…" aria-label="Describe what you are shooting" />
                 <button onClick={parseNatural} disabled={!naturalText.trim()} aria-label="Build recommendation"><ArrowRight size={20} /></button>
               </div>
-              <small>CamCue reads the details and applies the same compatibility rules.</small>
+              <small>{brand.name} reads the details and applies the same compatibility rules.</small>
             </section>
 
             <section className="home-section">
@@ -442,6 +452,27 @@ export default function CamCueApp() {
                   if (!item) return null;
                   return <button key={id} className={`popular-card tone-${item.group}`} onClick={() => { chooseScene(id); startFlow(3); }}><span className="scene-index">{String(index + 1).padStart(2, "0")}</span><strong>{item.name}</strong><small>Open setup <ChevronRight size={13} /></small></button>;
                 })}
+              </div>
+            </section>
+
+            <section className="how-band">
+              <div className="how-inner">
+                <div className="how-copy">
+                  <span>HOW IT WORKS</span>
+                  <h2>Three taps.<br />Then start recording.</h2>
+                  <p>No manual. No 14-minute video. {brand.name} works out the ideal way to shoot your scene, then fits it to what your camera can actually do.</p>
+                </div>
+                <ol className="how-steps">
+                  <li><i>01</i><strong>Pick your camera</strong><small>{cameras.length} capability profiles, from action cameras to cinema bodies.</small></li>
+                  <li><i>02</i><strong>Pick the shot</strong><small>{scenes.length} scenes, each with its own shooting strategy.</small></li>
+                  <li><i>03</i><strong>Set the conditions</strong><small>Light, movement and how the camera is mounted.</small></li>
+                </ol>
+              </div>
+              <div className="how-stats">
+                <div><b>{cameras.length}</b><small>Cameras</small></div>
+                <div><b>{scenes.length}</b><small>Scenes</small></div>
+                <div><b>{recipes.length}</b><small>Recipes</small></div>
+                <div><b>0</b><small>Impossible settings</small></div>
               </div>
             </section>
 
@@ -473,7 +504,19 @@ export default function CamCueApp() {
                 {bag.length > 0 && !cameraQuery && (
                   <div className="picker-block"><div className="picker-label"><Camera size={14} /> MY CAMERA BAG</div><div className="camera-grid compact-grid">{bag.map((id) => getCamera(id)).filter(Boolean).map((item) => item && <CameraCard key={item.id} item={item} selected={cameraId === item.id} inBag onChoose={() => setCameraId(item.id)} onBag={() => toggleBag(item.id)} />)}</div></div>
                 )}
-                <div className="picker-block"><div className="picker-label"><Search size={14} /> {cameraQuery ? `${filteredCameras.length} MATCHES` : "ALL CAMERAS"}</div><div className="camera-grid">{filteredCameras.map((item) => <CameraCard key={item.id} item={item} selected={cameraId === item.id} inBag={bag.includes(item.id)} onChoose={() => setCameraId(item.id)} onBag={() => toggleBag(item.id)} />)}</div></div>
+                {!cameraQuery && (
+                  <div className="filter-rail" role="tablist" aria-label="Filter cameras">
+                    <button className={cameraFilter === "all" ? "active" : ""} onClick={() => setCameraFilter("all")}>All <b>{cameras.length}</b></button>
+                    {categoryOrder.filter((key) => cameras.some((item) => item.category === key)).map((key) => (
+                      <button key={key} className={cameraFilter === key ? "active" : ""} onClick={() => setCameraFilter(key)}>{categoryLabels[key]}</button>
+                    ))}
+                    <span className="filter-divider" aria-hidden="true" />
+                    {cameraBrands.map((name) => (
+                      <button key={name} className={cameraFilter === `brand:${name}` ? "active" : ""} onClick={() => setCameraFilter(`brand:${name}`)}>{name}</button>
+                    ))}
+                  </div>
+                )}
+                <div className="picker-block"><div className="picker-label"><Search size={14} /> {cameraQuery ? `${filteredCameras.length} MATCHES` : `${filteredCameras.length} CAMERAS`}</div><div className="camera-grid">{filteredCameras.map((item) => <CameraCard key={item.id} item={item} selected={cameraId === item.id} inBag={bag.includes(item.id)} onChoose={() => setCameraId(item.id)} onBag={() => toggleBag(item.id)} />)}</div>{filteredCameras.length === 0 && <p className="no-results">No camera matches that. Try a model name like &ldquo;a7&rdquo;, &ldquo;osmo&rdquo; or &ldquo;hero&rdquo;.</p>}</div>
                 <div className="flow-footer"><span>{camera.manufacturer} {camera.model} selected</span><button className="primary-button" onClick={() => setStep(2)}>Choose my scene <ArrowRight size={18} /></button></div>
               </section>
             )}
@@ -570,7 +613,27 @@ export default function CamCueApp() {
             </section>
 
             <div className="result-actions"><button className="primary-button" onClick={saveSetup}><Bookmark size={18} /> Save this setup</button><button className="secondary-button" onClick={() => startFlow(2)}>Choose another shot</button></div>
-            <div className="verification-note"><ShieldCheck size={16} /><span>Capability checked for {camera.model}. Profile confidence: <strong>{camera.confidence}</strong>. Last reviewed {camera.lastVerified}.</span></div>
+            <section className={`data-provenance ${camera.confidence}`}>
+              <div className="provenance-head">
+                <ShieldCheck size={18} />
+                <div>
+                  <small>DATA PROVENANCE</small>
+                  <h3>Where these specs come from</h3>
+                </div>
+                <span className={`confidence-chip ${camera.confidence}`}>{camera.confidence === "verified" ? "VERIFIED" : camera.confidence === "high" ? "HIGH CONFIDENCE" : "NOT VERIFIED"}</span>
+              </div>
+              <dl className="provenance-grid">
+                <div><dt>Camera</dt><dd>{camera.manufacturer} {camera.model}</dd></div>
+                <div><dt>Sensor</dt><dd>{camera.sensor}</dd></div>
+                <div><dt>Last reviewed</dt><dd>{camera.lastVerified}</dd></div>
+                <div><dt>Source</dt><dd>{camera.officialSource ?? "Not recorded"}</dd></div>
+                {camera.firmwareChecked && <div><dt>Firmware</dt><dd>{camera.firmwareChecked}</dd></div>}
+              </dl>
+              {camera.verifyNote && <p className="provenance-note"><CircleAlert size={15} /> {camera.verifyNote}</p>}
+              <p className="provenance-footer">
+                Every setting above was filtered against this profile — {brand.name} will not suggest a mode your camera cannot select.
+              </p>
+            </section>
           </div>
         )}
 
@@ -605,6 +668,42 @@ export default function CamCueApp() {
         )}
       </main>
 
+      <footer className="site-footer">
+        <div className="footer-inner">
+          <div className="footer-brand">
+            <CamMark />
+            <strong>{brand.wordmark}</strong>
+            <p>{brand.tagline}</p>
+          </div>
+          <div className="footer-cols">
+            <div>
+              <h3>Product</h3>
+              <button onClick={() => startFlow(1)}>Get my settings</button>
+              <button onClick={() => navTo("recipes")}>Recipes</button>
+              <button onClick={() => navTo("bag")}>My camera bag</button>
+              <button onClick={() => navTo("learn")}>Learn</button>
+            </div>
+            <div>
+              <h3>Cameras</h3>
+              {cameraBrands.slice(0, 5).map((name) => (
+                <button key={name} onClick={() => { setCameraFilter(`brand:${name}`); setCameraQuery(""); startFlow(1); }}>{name}</button>
+              ))}
+            </div>
+            <div>
+              <h3>Data</h3>
+              <span>{cameras.length} capability profiles</span>
+              <span>{cameras.filter((c) => c.confidence === "verified").length} verified</span>
+              <span>{cameras.filter((c) => c.confidence === "high").length} high confidence</span>
+              <span>Last review {cameras.reduce((latest, c) => (c.lastVerified > latest ? c.lastVerified : latest), "")}</span>
+            </div>
+          </div>
+        </div>
+        <div className="footer-base">
+          <span>{brand.domain}</span>
+          <span>Settings are guidance, not a guarantee — always confirm on your own camera.</span>
+        </div>
+      </footer>
+
       <nav className="mobile-nav" aria-label="Mobile navigation">
         <button className={view === "home" ? "active" : ""} onClick={() => navTo("home")}><Home size={20} /><span>Home</span></button>
         <button className={view === "recipes" ? "active" : ""} onClick={() => navTo("recipes")}><Bookmark size={20} /><span>Recipes</span></button>
@@ -621,7 +720,14 @@ function CameraCard({ item, selected, inBag, onChoose, onBag }: { item: (typeof 
     <div className={`camera-card ${selected ? "selected" : ""}`}>
       <button className="camera-select" onClick={onChoose}>
         <span className="camera-visual"><Camera size={26} /></span>
-        <span className="camera-copy"><small>{item.manufacturer.toUpperCase()}</small><strong>{item.model}</strong><em>{item.category.replace("360", "360°")} camera</em></span>
+        <span className="camera-copy">
+          <small>{item.manufacturer.toUpperCase()}</small>
+          <strong>{item.model}</strong>
+          <em>
+            {categoryLabels[item.category]}
+            {item.confidence === "unverified" && <b className="unverified-flag">NOT VERIFIED</b>}
+          </em>
+        </span>
         {item.popular && <span className="popular-pill">POPULAR</span>}
         {selected && <span className="selected-check"><Check size={14} /></span>}
       </button>

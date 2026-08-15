@@ -1,16 +1,29 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Archivo, Inter, JetBrains_Mono } from "next/font/google";
 import { headers } from "next/headers";
+import { brand } from "@/lib/camcue/brand";
+import { cameras } from "@/lib/camcue/data/cameras";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Display face: condensed-feeling grotesque for the big uppercase statements.
+// The `-face` suffix matters: globals.css composes these into --font-display /
+// --font-sans / --font-mono stacks, and a variable cannot reference itself.
+const archivo = Archivo({
+  variable: "--display-face",
+  subsets: ["latin"],
+  weight: ["600", "700", "800", "900"],
+});
+
+const inter = Inter({
+  variable: "--sans-face",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Spec data reads like an instrument readout.
+const jetbrains = JetBrains_Mono({
+  variable: "--mono-face",
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -20,33 +33,36 @@ export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = `${protocol}://${host}`;
 
   return {
-    title: "CamCue — Camera Settings, Solved",
-    description: "Camera settings for the shot in front of you, checked against the gear you own.",
-    applicationName: "CamCue",
+    title: `${brand.name} — Camera Settings, Solved`,
+    description: `${brand.tagline} Capability-checked recommendations for ${cameras.length} cameras.`,
+    applicationName: brand.name,
+    metadataBase: new URL(baseUrl),
+    alternates: { canonical: brand.siteUrl },
     appleWebApp: {
       capable: true,
       statusBarStyle: "black-translucent",
-      title: "CamCue",
+      title: brand.name,
     },
     formatDetection: { telephone: false },
     openGraph: {
-      title: "CamCue — Camera Settings, Solved",
-      description: "Camera settings for the shot in front of you.",
+      title: `${brand.name} — Camera Settings, Solved`,
+      description: brand.tagline,
       type: "website",
       url: baseUrl,
-      images: [{ url: `${baseUrl}/og-v2.png`, width: 1736, height: 905, alt: "CamCue camera settings guide" }],
+      siteName: brand.name,
+      images: [{ url: `${baseUrl}/og-v2.png`, width: 1736, height: 905, alt: `${brand.name} camera settings guide` }],
     },
     twitter: {
       card: "summary_large_image",
-      title: "CamCue — Camera Settings, Solved",
-      description: "Camera settings for the shot in front of you.",
+      title: `${brand.name} — Camera Settings, Solved`,
+      description: brand.tagline,
       images: [`${baseUrl}/og-v2.png`],
     },
   };
 }
 
 export const viewport: Viewport = {
-  themeColor: "#0b0d0c",
+  themeColor: "#0a0b0c",
   colorScheme: "light",
   width: "device-width",
   initialScale: 1,
@@ -55,7 +71,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${archivo.variable} ${inter.variable} ${jetbrains.variable}`}>
       <body>{children}</body>
     </html>
   );

@@ -312,7 +312,7 @@ export function recommend(cam: CameraProfile, scene: SceneDef, sc: Scenario): Re
   const pro: SettingLine[] = [];
   const add = (line: SettingLine, primary = true) => { (primary ? settings : pro).push(line); };
 
-  add({ key: "resolution", label: "Resolution", value: mode.res, why: resWhy(mode.res, ideal) });
+  add({ key: "resolution", label: "Resolution", value: mode.res, why: resWhy(mode.res, ideal, mode.note) });
   add({ key: "fps", label: "Frame Rate", value: fpsLabel(mode.fps), why: fpsWhy(mode.fps, ideal, movement, light) });
   if (fov) add({ key: "fov", label: "Field of View", value: fov.name, why: fovWhy(fov, ideal, sc.mount) });
   if (stab) add({ key: "stabilization", label: "Stabilization", value: stab.name, why: stabWhy(stab, ideal, sc.mount, cam) });
@@ -413,7 +413,7 @@ export function recommend(cam: CameraProfile, scene: SceneDef, sc: Scenario): Re
     confidenceReason = "Mixed lighting keeps cameras guessing. Locked white balance helps, but expect some shots to need correction.";
   }
   if (cam.confidence === "unverified") {
-    warnings.push(`${cam.model}'s specifications are not fully verified in CamCue yet — double-check these modes exist on your camera.`);
+    warnings.push(`${cam.model}'s specifications are not fully verified yet — double-check these modes exist on your camera.`);
   }
 
   // ----- why it works (summary) -----
@@ -458,10 +458,15 @@ export function recommend(cam: CameraProfile, scene: SceneDef, sc: Scenario): Re
 // why-text helpers
 // ---------------------------------------------------------------------------
 
-function resWhy(res: string, ideal: IdealProfile): string {
-  if (ideal.resPreference === "efficient") return "This resolution balances quality against battery and file size.";
-  if (res.includes("360")) return "Full 360 capture — you'll choose the final frame afterwards.";
-  return `${res} gives plenty of detail and room to crop or stabilize in post.`;
+function resWhy(res: string, ideal: IdealProfile, note?: string): string {
+  const base = ideal.resPreference === "efficient"
+    ? "This resolution balances quality against battery and file size."
+    : res.includes("360")
+      ? "Full 360 capture — you'll choose the final frame afterwards."
+      : `${res} gives plenty of detail and room to crop or stabilize in post.`;
+  // Mode notes carry real consequences (crops, open gate, high-speed limits),
+  // so they belong in front of the user rather than buried in the data.
+  return note ? `${base} Note: ${note.toLowerCase()}.` : base;
 }
 
 function fpsWhy(fps: number, ideal: IdealProfile, movement: MovementId, light: number): string {

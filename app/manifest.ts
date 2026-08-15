@@ -1,14 +1,15 @@
 import type { MetadataRoute } from "next";
+import { brand } from "@/lib/camcue/brand";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "CamCue — Camera Settings, Solved",
-    short_name: "CamCue",
-    description: "Compatible camera settings for the shot in front of you.",
+    name: `${brand.name} — Camera Settings, Solved`,
+    short_name: brand.name,
+    description: brand.tagline,
     start_url: "/",
     display: "standalone",
-    background_color: "#f4f3ee",
-    theme_color: "#0b0d0c",
+    background_color: "#f0efea",
+    theme_color: "#0a0b0c",
     orientation: "portrait",
     icons: [
       { src: "/icon", sizes: "512x512", type: "image/png", purpose: "maskable" },

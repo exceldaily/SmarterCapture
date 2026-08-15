@@ -1,0 +1,200 @@
+/**
+ * Capability validator.
+ *
+ * Runs the recommendation engine across every camera x scene x condition
+ * combination and asserts the output is physically selectable on that camera.
+ * This is the guard against the one failure CamCue cannot survive: confidently
+ * recommending a mode the camera does not have.
+ *
+ *   npx tsx scripts/validate.ts
+ */
+
+import { cameras } from "../lib/camcue/data/cameras";
+import { scenes } from "../lib/camcue/data/scenes";
+import { recipes } from "../lib/camcue/data/recipes";
+import { recommend } from "../lib/camcue/engine";
+import { lightOptions, mountOptions } from "../lib/camcue/data/options";
+import type { LightId, MountId, Scenario } from "../lib/camcue/types";
+
+const problems: string[] = [];
+const warnings: string[] = [];
+let checks = 0;
+
+function fail(msg: string) { problems.push(msg); }
+
+// ---------- 1. static profile audit ----------
+for (const cam of cameras) {
+  const label = `${cam.manufacturer} ${cam.model}`;
+
+  if (!cam.videoModes.length) fail(`${label}: no video modes`);
+  for (const mode of cam.videoModes) {
+    if (!mode.fps.length) fail(`${label}: mode ${mode.res} has no frame rates`);
+    if (mode.fps.some((f) => f <= 0 || f > 1000)) fail(`${label}: implausible fps in ${mode.res}`);
+  }
+  if (!cam.stabilization.length) fail(`${label}: no stabilization entries`);
+  if (!cam.colorProfiles.length) fail(`${label}: no colour profiles`);
+  if (cam.iso.min >= cam.iso.max) fail(`${label}: ISO range is inverted`);
+
+  const ceil = cam.recommendedIsoCeiling;
+  if (ceil) {
+    if (!(ceil.bright <= ceil.normal && ceil.normal <= ceil.low)) {
+      fail(`${label}: ISO ceilings are not ordered bright <= normal <= low`);
+    }
+    if (ceil.low > cam.iso.max) fail(`${label}: low-light ISO ceiling exceeds the camera maximum`);
+  }
+
+  // Interchangeable-lens bodies must not claim a fixed aperture value.
+  if (cam.lensMount && cam.aperture?.type === "fixed") {
+    fail(`${label}: has a lens mount but declares a fixed aperture`);
+  }
+  // Fixed-lens cameras should state what the aperture actually is.
+  if (!cam.lensMount && cam.aperture && !cam.aperture.value) {
+    warnings.push(`${label}: fixed-lens camera has no aperture value recorded`);
+  }
+
+  // A stabilization mode that excludes every resolution is a data error.
+  for (const stab of cam.stabilization) {
+    if (stab.resExclude?.length) {
+      const remaining = cam.videoModes.filter((m) => !stab.resExclude!.some((r) => m.res.startsWith(r)));
+      if (!remaining.length) fail(`${label}: stabilization "${stab.name}" is excluded from every resolution`);
+    }
+  }
+
+  // Unverified profiles must stay minimal — no invented capabilities.
+  if (cam.confidence === "unverified") {
+    if (cam.videoModes.length > 2 || cam.colorProfiles.some((p) => p.log)) {
+      fail(`${label}: unverified profile carries speculative capabilities`);
+    }
+    if (!cam.verifyNote) fail(`${label}: unverified profile has no verifyNote`);
+  }
+
+  if (!cam.officialSource && cam.confidence !== "unverified") {
+    warnings.push(`${label}: no officialSource recorded`);
+  }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(cam.lastVerified)) fail(`${label}: lastVerified is not an ISO date`);
+}
+
+// ---------- 2. engine output audit ----------
+const lights = lightOptions.map((l) => l.id as LightId);
+const mounts = mountOptions.map((m) => m.id as MountId);
+
+for (const cam of cameras) {
+  for (const scene of scenes) {
+    // Sample the condition space rather than exploding it: every light, and a
+    // rotating mount so all mounts get covered across the scene list.
+    for (const light of lights) {
+      const mount = mounts[(scenes.indexOf(scene) + lights.indexOf(light)) % mounts.length];
+      const scenario: Scenario = { cameraId: cam.id, sceneId: scene.id, light, mount };
+      const rec = recommend(cam, scene, scenario);
+      checks += 1;
+
+      const label = `${cam.model} / ${scene.name} / ${light} / ${mount}`;
+      const resValue = rec.settings.find((s) => s.key === "resolution")?.value ?? "";
+      const fpsValue = parseInt(rec.settings.find((s) => s.key === "fps")?.value ?? "0", 10);
+
+      // The recommended resolution + frame rate must exist together on this camera.
+      // A resolution may appear as several entries (e.g. uncropped 4K/24-30 and
+      // cropped 4K/60), so the camera supports the union of their frame rates.
+      const modes = cam.videoModes.filter((m) => m.res === resValue);
+      if (!modes.length) {
+        fail(`${label}: recommended resolution "${resValue}" is not in the camera profile`);
+      } else if (!modes.some((m) => m.fps.includes(fpsValue))) {
+        fail(`${label}: ${resValue} does not support ${fpsValue} FPS on this camera`);
+      }
+
+      // The recommended stabilization mode must exist and be legal at that res/fps.
+      const stabValue = rec.settings.find((s) => s.key === "stabilization")?.value;
+      if (stabValue) {
+        const stab = cam.stabilization.find((s) => s.name === stabValue);
+        if (!stab) {
+          fail(`${label}: stabilization "${stabValue}" is not in the camera profile`);
+        } else {
+          if (stab.maxFps && fpsValue > stab.maxFps) {
+            fail(`${label}: "${stab.name}" is not available at ${fpsValue} FPS (max ${stab.maxFps})`);
+          }
+          if (stab.resExclude?.some((r) => resValue.startsWith(r))) {
+            fail(`${label}: "${stab.name}" is not available at ${resValue}`);
+          }
+        }
+      }
+
+      // FOV must be a real mode, and must never be offered on a camera that has none.
+      const fovValue = rec.settings.find((s) => s.key === "fov")?.value;
+      if (fovValue && !cam.fovModes?.some((f) => f.name === fovValue)) {
+        fail(`${label}: field of view "${fovValue}" is not in the camera profile`);
+      }
+      if (!cam.fovModes?.length && fovValue) {
+        fail(`${label}: FOV recommended for a camera with no FOV modes`);
+      }
+
+      // Colour profile must exist.
+      const colorValue = rec.settings.find((s) => s.key === "color")?.value;
+      if (colorValue && !cam.colorProfiles.some((p) => p.name === colorValue)) {
+        fail(`${label}: colour profile "${colorValue}" is not in the camera profile`);
+      }
+
+      // ISO must sit inside the camera's real range.
+      const isoValue = rec.settings.find((s) => s.key === "iso")?.value ?? "";
+      const [isoMin, isoMax] = isoValue.split("–").map((v) => parseInt(v, 10));
+      if (Number.isFinite(isoMin) && isoMin < cam.iso.min) fail(`${label}: ISO floor ${isoMin} is below the camera minimum`);
+      if (Number.isFinite(isoMax) && isoMax > cam.iso.max) fail(`${label}: ISO ceiling ${isoMax} exceeds the camera maximum`);
+
+      // Aperture must never be offered on a body with no aperture control.
+      if (!cam.aperture && rec.proSettings.some((s) => s.key === "aperture")) {
+        fail(`${label}: aperture shown for a camera with no aperture control`);
+      }
+      // Pre-record must never be offered on a camera without it.
+      if (!cam.preRecord && rec.settings.some((s) => s.key === "preRecord")) {
+        fail(`${label}: Pre-Record recommended on a camera that has no such feature`);
+      }
+      // Every recommendation needs its human explanation.
+      if (!rec.whyItWorks.trim()) fail(`${label}: empty "why this works" text`);
+      if (!rec.mistakes.length) fail(`${label}: no "don't mess this up" advice`);
+    }
+  }
+}
+
+// ---------- 3. recipe audit ----------
+for (const recipe of recipes) {
+  if (!cameras.some((c) => c.id === recipe.cameraId)) {
+    fail(`Recipe "${recipe.name}" points at unknown camera ${recipe.cameraId}`);
+  }
+  if (!scenes.some((s) => s.id === recipe.scenario.sceneId)) {
+    fail(`Recipe "${recipe.name}" points at unknown scene ${recipe.scenario.sceneId}`);
+  }
+}
+
+// ---------- 4. scene feature-link audit ----------
+const sceneIds = new Set(scenes.map((s) => s.id));
+for (const cam of cameras) {
+  for (const feature of cam.specialFeatures) {
+    for (const id of feature.sceneIds ?? []) {
+      if (!sceneIds.has(id)) {
+        warnings.push(`${cam.model}: feature "${feature.name}" references unknown scene "${id}"`);
+      }
+    }
+  }
+}
+
+// ---------- report ----------
+console.log(`\nCamCue capability validation`);
+console.log(`  cameras:      ${cameras.length}`);
+console.log(`  scenes:       ${scenes.length}`);
+console.log(`  combinations: ${checks}`);
+console.log(`  warnings:     ${warnings.length}`);
+console.log(`  failures:     ${problems.length}\n`);
+
+if (warnings.length) {
+  console.log("Warnings (non-blocking):");
+  for (const w of Array.from(new Set(warnings)).slice(0, 40)) console.log(`  - ${w}`);
+  console.log("");
+}
+
+if (problems.length) {
+  console.log("FAILURES:");
+  for (const p of Array.from(new Set(problems)).slice(0, 60)) console.log(`  x ${p}`);
+  console.log("");
+  process.exit(1);
+}
+
+console.log("All recommendations are selectable on their camera.\n");
