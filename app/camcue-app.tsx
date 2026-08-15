@@ -43,7 +43,6 @@ import {
 } from "lucide-react";
 import { recommend, whatIfAnswer, whatIfOptions } from "@/lib/camcue/engine";
 import { CameraArt } from "./camera-art";
-import { ScenePhoto, hasScenePhoto } from "./scene-photo";
 import { brand } from "@/lib/camcue/brand";
 import { cameraBrands, cameras, categoryLabels, categoryOrder, getCamera } from "@/lib/camcue/data/cameras";
 import { recipes, type Recipe } from "@/lib/camcue/data/recipes";
@@ -69,6 +68,7 @@ import type {
   PlatformId,
   PriorityId,
   Scenario,
+  SceneDef,
   SettingLine,
   TweakId,
 } from "@/lib/camcue/types";
@@ -121,6 +121,27 @@ function confidenceCopy(confidence: "optimal" | "tradeoffs" | "challenging") {
   if (confidence === "optimal") return "Great match";
   if (confidence === "tradeoffs") return "Best compromise";
   return "Challenging conditions";
+}
+
+/**
+ * A scene's shooting characteristics as a short technical readout, in the
+ * spirit of film edge-markings or an EXIF strip. Every token is derived from
+ * the scene's real DNA rather than being decorative filler.
+ */
+function sceneTechLine(scene: SceneDef): string[] {
+  const motion: Record<string, string> = {
+    stationary: "STATIC", slow: "SLOW", moderate: "MODERATE", fast: "FAST", extreme: "RAPID",
+  };
+  const tokens: string[] = [motion[scene.motion] ?? "MODERATE"];
+  if (scene.cinematicBias) tokens.push("24P");
+  else if (scene.motion === "fast" || scene.motion === "extreme") tokens.push("60P");
+  if (scene.slowMoValue >= 3) tokens.push("SLO-MO");
+  if (scene.night) tokens.push("LOW LIGHT");
+  if (scene.wide) tokens.push("WIDE");
+  if (scene.tight) tokens.push("LINEAR");
+  if (scene.water) tokens.push("WATER");
+  if (scene.talking) tokens.push("AUDIO");
+  return tokens.slice(0, 3);
 }
 
 function CamMark() {
@@ -517,13 +538,18 @@ export default function CamCueApp() {
                   return (
                     <button
                       key={id}
-                      className={`popular-card tone-${item.group}${hasScenePhoto(id) ? " has-photo" : ""}`}
+                      className={`popular-card tone-${item.group}`}
                       onClick={() => { chooseScene(id); startFlow(3); }}
                     >
-                      <ScenePhoto sceneId={id} sizes="(max-width: 700px) 50vw, 22vw" priority={index < 2} />
-                      <span className="scene-index">{String(index + 1).padStart(2, "0")}</span>
+                      <span className="frame-perf" aria-hidden="true" />
+                      <span className="scene-index">{String(index + 1).padStart(2, "0")}<i>A</i></span>
+                      <span className="frame-edge" aria-hidden="true">{item.group.toUpperCase()}</span>
                       <strong>{item.name}</strong>
+                      <span className="scene-tech">
+                        {sceneTechLine(item).map((token) => <em key={token}>{token}</em>)}
+                      </span>
                       <small>Open setup <ChevronRight size={13} /></small>
+                      <span className="frame-perf bottom" aria-hidden="true" />
                     </button>
                   );
                 })}
@@ -601,7 +627,7 @@ export default function CamCueApp() {
                 <div className="flow-heading"><span className="step-icon"><Compass size={23} /></span><div><h1>What are you shooting?</h1><p>Pick the closest match. You can fine-tune it next.</p></div></div>
                 <label className="search-field"><Search size={18} /><input value={sceneQuery} onChange={(event) => setSceneQuery(event.target.value)} placeholder="Search fishing, night, vlog…" /></label>
                 {!sceneQuery && <div className="group-tabs" role="tablist">{sceneGroups.map((group) => <button key={group.id} className={sceneGroup === group.id ? "active" : ""} onClick={() => setSceneGroup(group.id)}>{group.name}</button>)}</div>}
-                <div className="scene-grid">{filteredScenes.map((item) => <button key={item.id} className={`scene-card ${sceneId === item.id ? "selected" : ""}`} onClick={() => chooseScene(item.id)}><span className="scene-monogram">{item.name.split(/\s|\//).filter(Boolean).slice(0, 2).map((word) => word[0]).join("").toUpperCase()}</span><strong>{item.name}</strong>{sceneId === item.id && <i><Check size={13} /></i>}</button>)}</div>
+                <div className="scene-grid">{filteredScenes.map((item, index) => <button key={item.id} className={`scene-card ${sceneId === item.id ? "selected" : ""}`} onClick={() => chooseScene(item.id)}><span className="scene-card-top"><span className="scene-monogram">{item.name.split(/\s|\//).filter(Boolean).slice(0, 2).map((word) => word[0]).join("").toUpperCase()}</span><span className="scene-frame-no">{String(index + 1).padStart(2, "0")}</span></span><strong>{item.name}</strong><span className="scene-tech light">{sceneTechLine(item).slice(0, 2).map((token) => <em key={token}>{token}</em>)}</span>{sceneId === item.id && <i><Check size={13} /></i>}</button>)}</div>
                 <div className="flow-footer"><span>{scene.name} selected</span><button className="primary-button" onClick={() => setStep(3)}>Add conditions <ArrowRight size={18} /></button></div>
               </section>
             )}
@@ -821,6 +847,7 @@ function CameraCard({ item, selected, inBag, onChoose, onBag }: { item: (typeof 
             {categoryLabels[item.category]}
             {item.confidence === "unverified" && <b className="unverified-flag">NOT VERIFIED</b>}
           </em>
+          <span className="camera-sensor">{item.sensor}</span>
         </span>
         {selected && <span className="selected-check"><Check size={14} /></span>}
       </button>

@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { brand } from "@/lib/camcue/brand";
 import { cameraBrands, cameras } from "@/lib/camcue/data/cameras";
-import { creditedPhotos } from "@/lib/camcue/data/scene-photos";
-import { getScene } from "@/lib/camcue/data/scenes";
+import { scenes } from "@/lib/camcue/data/scenes";
 
 export const metadata = {
   title: `Credits & sources — ${brand.name}`,
@@ -10,16 +9,7 @@ export const metadata = {
     "Where the photography and camera specification data on this site comes from, and a statement of independence from camera manufacturers.",
 };
 
-const sourceLabels: Record<string, string> = {
-  unsplash: "Unsplash",
-  pexels: "Pexels",
-  pixabay: "Pixabay",
-  licensed: "Licensed stock",
-  own: "Own photography",
-};
-
 export default function CreditsPage() {
-  const photos = creditedPhotos();
   const lastReview = cameras.reduce((latest, c) => (c.lastVerified > latest ? c.lastVerified : latest), "");
 
   return (
@@ -69,45 +59,22 @@ export default function CreditsPage() {
       </section>
 
       <section>
-        <h2>Photography</h2>
-        {photos.length === 0 ? (
-          <p>
-            No third-party photographs are currently used on this site. Scene artwork is generated
-            in code, and the camera illustrations are original drawings rather than manufacturer
-            product images.
-          </p>
-        ) : (
-          <>
-            <p>
-              Scene photography is licensed for commercial use. Photographers are credited below
-              even where their licence does not require it.
-            </p>
-            <ul className="credit-list">
-              {photos.map(({ sceneId, photo }) => {
-                const scene = getScene(sceneId);
-                return (
-                  <li key={sceneId}>
-                    <span className="credit-scene">{scene?.name ?? sceneId}</span>
-                    <span className="credit-by">
-                      {photo.photographer ?? "Unknown"}
-                      {" · "}
-                      {photo.url ? (
-                        <a href={photo.url} target="_blank" rel="noopener noreferrer">
-                          {sourceLabels[photo.source] ?? photo.source}
-                        </a>
-                      ) : (
-                        sourceLabels[photo.source] ?? photo.source
-                      )}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </>
-        )}
+        <h2>Imagery</h2>
         <p>
-          The camera illustrations throughout the site are original artwork. No manufacturer
-          product photography, press imagery or brand logo is used anywhere on this site.
+          <strong>This site uses no photography at all.</strong> Not stock, not press imagery, not
+          manufacturer product shots. Every visual element is drawn in code: the camera
+          illustrations across all {cameras.length} profiles, and the artwork behind
+          all {scenes.length} scenes.
+        </p>
+        <p>
+          That is a deliberate choice rather than a limitation. Product photography assembled from
+          mixed sources looks like exactly what it is, and manufacturer press imagery is licensed
+          for editorial use rather than for promoting an independent site like this one. Drawing
+          everything keeps the visual language consistent across every camera and avoids borrowing
+          credibility from brands that have nothing to do with us.
+        </p>
+        <p>
+          No manufacturer logo, product photograph or press asset appears anywhere on this site.
         </p>
       </section>
 
