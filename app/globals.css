@@ -818,6 +818,9 @@ p { margin: 0; }
 
 @media (min-width: 700px) { .popular-card { min-height: 244px; } }
 
+.popular-card { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14); }
+.popular-card:hover { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), var(--shadow-lift); }
+
 .popular-card::before {
   position: absolute;
   content: "";
@@ -874,7 +877,8 @@ p { margin: 0; }
   font-family: var(--font-mono);
   font-size: 8px;
   letter-spacing: 0.22em;
-  color: rgba(255, 255, 255, 0.34);
+  color: rgba(255, 255, 255, 0.5);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
 }
 
 /* Technical readout, in the spirit of film edge-markings. */
@@ -901,20 +905,22 @@ p { margin: 0; }
 
 .ghost-no {
   position: absolute;
-  top: -14px;
-  right: 2px;
+  top: -30px;
+  right: -6px;
   z-index: 1;
   font-family: var(--font-display);
-  font-size: 128px;
+  font-size: 190px;
   font-weight: 900;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.07em;
   line-height: 1;
-  color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.13);
+  /* Knocked out of the light rather than painted over it. */
+  mix-blend-mode: overlay;
   pointer-events: none;
   transition: color 0.4s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.popular-card:hover .ghost-no { color: rgba(255, 255, 255, 0.09); transform: translateY(-4px); }
+.popular-card:hover .ghost-no { color: rgba(255, 255, 255, 0.26); transform: translateY(-6px); }
 
 .scene-index i {
   font-style: normal;
@@ -965,29 +971,29 @@ p { margin: 0; }
    the lower-right, the way product shots are actually lit. The second layer
    is what stops these reading as flat colour fills. */
 .tone-outdoors::before { background:
-  radial-gradient(75% 85% at 22% 12%, #3d8a67, transparent 62%),
-  radial-gradient(80% 90% at 88% 96%, #133a4a, transparent 65%),
-  #101e17; }
+  radial-gradient(85% 95% at 18% 8%, #54b98a, transparent 58%),
+  radial-gradient(85% 95% at 92% 100%, #16505f, transparent 62%),
+  #0d1a13; }
 .tone-action::before { background:
-  radial-gradient(75% 85% at 22% 12%, #c2491a, transparent 62%),
-  radial-gradient(80% 90% at 88% 96%, #3a1230, transparent 65%),
-  #1c0d07; }
+  radial-gradient(85% 95% at 18% 8%, #ff5c1e, transparent 58%),
+  radial-gradient(85% 95% at 92% 100%, #521436, transparent 62%),
+  #180b06; }
 .tone-travel::before { background:
-  radial-gradient(75% 85% at 22% 12%, #27798f, transparent 62%),
-  radial-gradient(80% 90% at 88% 96%, #123054, transparent 65%),
-  #0a1a20; }
+  radial-gradient(85% 95% at 18% 8%, #35a3bf, transparent 58%),
+  radial-gradient(85% 95% at 92% 100%, #173e6e, transparent 62%),
+  #081720; }
 .tone-people::before { background:
-  radial-gradient(75% 85% at 22% 12%, #a06428, transparent 62%),
-  radial-gradient(80% 90% at 88% 96%, #45182e, transparent 65%),
-  #1c1106; }
+  radial-gradient(85% 95% at 18% 8%, #d98a35, transparent 58%),
+  radial-gradient(85% 95% at 92% 100%, #5c1c38, transparent 62%),
+  #180e05; }
 .tone-creator::before { background:
-  radial-gradient(75% 85% at 22% 12%, #5d4aa8, transparent 62%),
-  radial-gradient(80% 90% at 88% 96%, #1b3a5e, transparent 65%),
-  #120d22; }
+  radial-gradient(85% 95% at 18% 8%, #7d64dd, transparent 58%),
+  radial-gradient(85% 95% at 92% 100%, #1f4a7a, transparent 62%),
+  #0f0b1e; }
 .tone-special::before { background:
-  radial-gradient(75% 85% at 22% 12%, #2d5f98, transparent 62%),
-  radial-gradient(80% 90% at 88% 96%, #0f3a3d, transparent 65%),
-  #091220; }
+  radial-gradient(85% 95% at 18% 8%, #3e7fc9, transparent 58%),
+  radial-gradient(85% 95% at 92% 100%, #124a4e, transparent 62%),
+  #070f1c; }
 
 .scene-index {
   position: absolute;
@@ -997,7 +1003,8 @@ p { margin: 0; }
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.14em;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55);
 }
 
 .popular-card strong {
