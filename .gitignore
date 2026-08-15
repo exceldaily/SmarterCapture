@@ -18,9 +18,11 @@
 /out/
 
 # production
-/build
-# ...except this one, which is source rather than output. vite.config.ts
-# imports it, so ignoring it breaks the type check on a clean checkout.
+# Note the trailing /*: git will not descend into an excluded *directory*, so
+# "/build" alone makes the negation below a no-op. build/sites-vite-plugin.ts
+# is source that vite.config.ts imports, and a clean checkout fails to
+# type-check without it.
+/build/*
 !/build/sites-vite-plugin.ts
 /dist
 /.vinext
