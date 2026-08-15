@@ -19,6 +19,9 @@
 
 # production
 /build
+# ...except this one, which is source rather than output. vite.config.ts
+# imports it, so ignoring it breaks the type check on a clean checkout.
+!/build/sites-vite-plugin.ts
 /dist
 /.vinext
 /.wrangler
