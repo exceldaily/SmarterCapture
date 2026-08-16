@@ -831,6 +831,7 @@ export default function CamCueApp() {
             <strong>{t("footerDisclaimerLead", { brand: brand.name })}</strong> {t("footerDisclaimerBody")}
           </p>
           <p>{t("footerDisclaimerTrademarks")}</p>
+          <p>{t("footerEquipmentRisk")}</p>
         </div>
 
         <div className="footer-base">

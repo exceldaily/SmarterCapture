@@ -183,6 +183,7 @@ export interface Dictionary {
   footerDisclaimerLead: string; // supports {brand}
   footerDisclaimerBody: string;
   footerDisclaimerTrademarks: string;
+  footerEquipmentRisk: string;
   footerIndependent: string;
 }
 
