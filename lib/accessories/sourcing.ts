@@ -457,6 +457,68 @@ export const accessorySourcingRecords: AccessorySourcingRecord[] = [
     selectionReason: "The physical design is relevant, but source conflicts correctly keep it out of launch checkout.",
     blockers: ["MOQ 5", "Compatibility conflict", "Sample-price anomaly", shippingRequiresConfirmation, "Reseller image permission", "Physical comfort/retention test"],
   },
+  {
+    productId: "magnetic-quick-release-base",
+    verificationStatus: "source-checked",
+    lastVerified: "2026-08-16",
+    supplierPriceLastVerified: "2026-08-16",
+    shippingLastVerified: null,
+    availabilityLastVerified: "2026-08-16",
+    // Owner confirmed on 2026-08-16 that the supplier granted photo permission
+    // in their Alibaba chat.
+    imageUsageStatus: "APPROVED_FOR_USE",
+    candidates: [candidate({
+      role: "primary",
+      supplierName: "Shenzhen Little Wolf Trading Co., Ltd.",
+      supplierCountry: "China",
+      supplierUrl: null,
+      alibabaProductUrl: "https://www.alibaba.com/product-detail/Sturdy-Magnetic-Quick-Release-Base-Compatible_1601859608989.html",
+      supplierProductId: "1601859608989",
+      supplierYearsActive: 5,
+      supplierRating: "4.6/5 store rating (1,404 store reviews; 94.4% on-time dispatch, ≤2h response, 10% reorder rate)",
+      supplierVerified: null,
+      tradeAssurance: true,
+      displayedPrice: "THB 118.60 (≈US$3.60) at the 10–399 piece tier",
+      actualOneUnitPrice: null,
+      samplePrice: "THB 169.43 (≈US$5.15)",
+      currency: "THB",
+      moq: 10,
+      pricingTiers: [
+        { quantity: "10–399 pieces", price: "THB 118.60 (≈US$3.60)" },
+        { quantity: "400–4,999 pieces", price: "THB 110.13 (≈US$3.35)" },
+        { quantity: "5,000–9,999 pieces", price: "THB 101.66 (≈US$3.09)" },
+        { quantity: "≥10,000 pieces", price: "THB 93.19 (≈US$2.83)" },
+      ],
+      shippingFinding:
+        "Supplier-to-owner shipping showed FREE (capped at THB 677.69 on THB 1,016.54+ orders) with guaranteed delivery Aug 31–Sep 09 quoted to a Thailand address on Aug 16. Outbound shipping to customers is absorbed into the $25 retail price per owner decision, estimated US$4–5 for the 0.15 kg package — not yet measured.",
+      deliveryFinding: "Roughly 2–3.5 weeks supplier-to-owner (Aug 31–Sep 09 window quoted Aug 16). 2–5 working day dispatch claimed for normal orders.",
+      dropshippingSupported: null,
+      sampleSupported: true,
+      trackingAvailable: null,
+      sourceNotes: [
+        "Page browsed directly through the owner's signed-in session on 2026-08-16; prices displayed in THB for a Thailand delivery address, USD conversions approximate (~33 THB/USD).",
+        "Supplier granted photo usage permission in the owner's Alibaba chat (owner-confirmed 2026-08-16).",
+        "New listing: 3 sold, no product reviews yet. The 4.6/5 store rating is dominated by the supplier's watch-strap line, not this product.",
+        "Trading company with a claimed Shenzhen factory; brand BEIZIYE, made in Guangdong.",
+        "Package 10x10x5 cm, 0.15 kg gross — light enough for inexpensive outbound shipping.",
+        "Compatibility (DJI Action 6/6 Pro/5 Pro/4/3, Osmo Nano, Insta360 Ace Pro 2/Ace Pro/X5) is supplier-claimed and not yet physically verified.",
+      ],
+    })],
+    marketComparisons: [],
+    estimatedLandedCostUsd: 3.6,
+    recommendedRetailPriceUsd: 25,
+    // 25.00 − 3.60 unit − ~1.05 Stripe − ~4.50 estimated outbound shipping.
+    estimatedProfitUsd: 15.85,
+    estimatedMarginPercent: 63,
+    marginStatus: "GOOD_MARGIN",
+    bulkOpportunity: "Tiers fall to ≈US$2.83 at 10,000 pieces; the 10-piece tier is already priced well for launch. Sample ≈US$5.15.",
+    selectionReason: "Owner-selected launch product #1: strong margin at the owner-approved $25 price, supplier granted photo rights, and quick-release bases pair naturally with every mount recommendation on the site.",
+    blockers: [
+      "Physical sample check of magnet strength and claimed camera fit",
+      "Outbound US shipping cost is an owner estimate, not yet measured",
+      "Stripe is not configured; checkout remains gated",
+    ],
+  },
 ];
 
 export function getSourcingRecord(productId: string) {

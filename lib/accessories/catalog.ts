@@ -234,6 +234,36 @@ export const accessoryProducts: AccessoryProduct[] = [
     recommendationMounts: ["head"],
     recommendationReason: "Supports a natural eye-line point of view for low-impact, hands-free filming.",
   },
+  {
+    id: "magnetic-quick-release-base",
+    slug: "magnetic-quick-release-base",
+    name: "Magnetic Quick-Release Base",
+    shortName: "Magnetic QR Base",
+    description:
+      "A metal magnetic quick-release base with a dual interface, so the camera snaps between mounts in seconds instead of being unscrewed.",
+    category: "mounts",
+    useCases: ["Fast mount swaps", "Cycling", "Motorcycles", "Travel", "Everyday carry"],
+    universal: false,
+    mountStandard: "Magnetic quick-release over the standard three-prong interface",
+    brandsSupported: ["DJI Osmo Action", "DJI Osmo Nano", "Insta360 Ace", "Insta360 X5"],
+    compatibilityNote:
+      "Supplier lists DJI Action 6/6 Pro/5 Pro/4/3 and Osmo Nano plus Insta360 Ace Pro 2/Ace Pro/X5. Compatibility is supplier-claimed — confirm your camera's magnetic latch engages fully before trusting it in motion.",
+    includedItems: ["Magnetic quick-release base"],
+    warnings: [
+      "Magnetic mounts are convenient, not fail-safe — use a tether over water or at speed.",
+    ],
+    material: "Metal",
+    // Owner-approved launch price is $25, recorded in sourcing.ts
+    // (recommendedRetailPriceUsd). It becomes the public price when the
+    // product flips to "ready" — the validator forbids pricing a product
+    // customers cannot buy yet.
+    retailPriceUsd: null,
+    catalogStatus: "researching",
+    fulfillmentMode: "MANUAL_ALIBABA",
+    recommendationSceneIds: ["motorcycle", "cycling", "walking-tour", "road-trip", "hiking", "vlog"],
+    recommendationMounts: ["chest", "helmet", "handlebar", "vehicle", "tripod"],
+    recommendationReason: "Moves one camera between mounts in seconds — the accessory that makes owning several mounts practical.",
+  },
 ];
 
 export function getAccessory(slug: string) {
