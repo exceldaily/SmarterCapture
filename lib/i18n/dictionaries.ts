@@ -138,8 +138,9 @@ const en: Dictionary = {
   footerDisclaimerBody:
     "It is not affiliated with, endorsed by, sponsored by or otherwise connected to DJI, GoPro, Insta360, Sony, Canon, Nikon, Fujifilm, Panasonic or any other manufacturer.",
   footerDisclaimerTrademarks:
-    footerEquipmentRisk: undefined,
     "Camera names, model numbers and feature names are trademarks of their respective owners and are used here only to identify the equipment a recommendation applies to. Capability data is compiled from publicly published specifications. Settings are guidance rather than a guarantee, so always confirm them on your own camera.",
+  footerEquipmentRisk:
+    "Accessories are sold on the basis that you check their fit and hold before every use. Smarter Capture is not liable for equipment damaged by accessory use or failure.",
   footerIndependent: "Independent guide. No manufacturer affiliation.",
 };
 
@@ -272,8 +273,9 @@ const es: Dictionary = {
   footerDisclaimerBody:
     "No está afiliada, patrocinada ni respaldada por DJI, GoPro, Insta360, Sony, Canon, Nikon, Fujifilm, Panasonic ni ningún otro fabricante, ni tiene relación alguna con ellos.",
   footerDisclaimerTrademarks:
-    footerEquipmentRisk: undefined,
     "Los nombres de cámaras, números de modelo y nombres de funciones son marcas de sus respectivos propietarios y se usan aquí solo para identificar el equipo al que se aplica una recomendación. Los datos de capacidades proceden de especificaciones publicadas. Los ajustes son una guía, no una garantía, así que confírmalos siempre en tu propia cámara.",
+  footerEquipmentRisk:
+    "Los accesorios se venden bajo la condición de que compruebes su ajuste y sujeción antes de cada uso. Smarter Capture no se hace responsable de los equipos dañados por el uso o fallo de un accesorio.",
   footerIndependent: "Guía independiente. Sin afiliación con fabricantes.",
 };
 
@@ -406,8 +408,9 @@ const fr: Dictionary = {
   footerDisclaimerBody:
     "Il n'est ni affilié, ni approuvé, ni sponsorisé par DJI, GoPro, Insta360, Sony, Canon, Nikon, Fujifilm, Panasonic ou tout autre fabricant, et n'a aucun lien avec eux.",
   footerDisclaimerTrademarks:
-    footerEquipmentRisk: undefined,
     "Les noms de caméras, numéros de modèles et noms de fonctions sont des marques de leurs propriétaires respectifs et ne servent ici qu'à identifier le matériel concerné par une recommandation. Les données de capacités proviennent des spécifications publiées. Les réglages sont des conseils, pas une garantie : vérifiez-les toujours sur votre propre caméra.",
+  footerEquipmentRisk:
+    "Les accessoires sont vendus à condition que vous vérifiiez leur fixation et leur tenue avant chaque utilisation. Smarter Capture décline toute responsabilité en cas de matériel endommagé par l'utilisation ou la défaillance d'un accessoire.",
   footerIndependent: "Guide indépendant. Aucune affiliation avec les fabricants.",
 };
 
@@ -540,8 +543,9 @@ const de: Dictionary = {
   footerDisclaimerBody:
     "Er ist weder mit DJI, GoPro, Insta360, Sony, Canon, Nikon, Fujifilm, Panasonic noch einem anderen Hersteller verbunden und wird von keinem unterstützt oder gesponsert.",
   footerDisclaimerTrademarks:
-    footerEquipmentRisk: undefined,
     "Kameranamen, Modellnummern und Funktionsbezeichnungen sind Marken ihrer jeweiligen Inhaber und dienen hier nur dazu, das Gerät zu benennen, für das eine Empfehlung gilt. Die Daten stammen aus öffentlich veröffentlichten Spezifikationen. Die Einstellungen sind eine Orientierung, keine Garantie. Prüfe sie immer an deiner eigenen Kamera.",
+  footerEquipmentRisk:
+    "Zubehör wird unter der Voraussetzung verkauft, dass du Sitz und Halt vor jeder Nutzung prüfst. Smarter Capture haftet nicht für Ausrüstung, die durch Nutzung oder Versagen von Zubehör beschädigt wird.",
   footerIndependent: "Unabhängiger Guide. Keine Verbindung zu Herstellern.",
 };
 
@@ -674,8 +678,9 @@ const pt: Dictionary = {
   footerDisclaimerBody:
     "Não é afiliado, patrocinado nem aprovado pela DJI, GoPro, Insta360, Sony, Canon, Nikon, Fujifilm, Panasonic ou qualquer outro fabricante, nem tem qualquer ligação a eles.",
   footerDisclaimerTrademarks:
-    footerEquipmentRisk: undefined,
     "Os nomes das câmaras, números de modelo e nomes de funções são marcas dos respetivos proprietários e são usados aqui apenas para identificar o equipamento a que uma recomendação se aplica. Os dados de capacidades vêm de especificações publicadas. As definições são orientação, não garantia, por isso confirme-as sempre na sua própria câmara.",
+  footerEquipmentRisk:
+    "Os acessórios são vendidos com a condição de que você verifique o encaixe e a firmeza antes de cada uso. A Smarter Capture não se responsabiliza por equipamentos danificados pelo uso ou falha de um acessório.",
   footerIndependent: "Guia independente. Sem afiliação a fabricantes.",
 };
 
@@ -808,8 +813,9 @@ const ja: Dictionary = {
   footerDisclaimerBody:
     "DJI、GoPro、Insta360、ソニー、キヤノン、ニコン、富士フイルム、パナソニックなど、いかなるメーカーとも提携・後援・承認関係はありません。",
   footerDisclaimerTrademarks:
-    footerEquipmentRisk: undefined,
     "カメラ名、型番、機能名は各社の商標であり、推奨が適用される機材を特定する目的でのみ使用しています。性能データは公開されている仕様に基づきます。設定は保証ではなく目安ですので、必ずお手元のカメラでご確認ください。",
+  footerEquipmentRisk:
+    "アクセサリーは、毎回の使用前に取り付けと保持力をご確認いただくことを前提に販売しています。アクセサリーの使用または不具合による機材の損傷について、Smarter Captureは責任を負いません。",
   footerIndependent: "独立系ガイド。メーカーとの提携はありません。",
 };
 
@@ -942,8 +948,9 @@ const th: Dictionary = {
   footerDisclaimerBody:
     "ไม่ได้เป็นพันธมิตร ไม่ได้รับการรับรองหรือสนับสนุนจาก DJI, GoPro, Insta360, Sony, Canon, Nikon, Fujifilm, Panasonic หรือผู้ผลิตรายใดทั้งสิ้น",
   footerDisclaimerTrademarks:
-    footerEquipmentRisk: undefined,
     "ชื่อกล้อง หมายเลขรุ่น และชื่อฟีเจอร์เป็นเครื่องหมายการค้าของเจ้าของแต่ละราย และใช้ที่นี่เพียงเพื่อระบุอุปกรณ์ที่คำแนะนำนั้นใช้ได้ ข้อมูลความสามารถรวบรวมจากสเปกที่เผยแพร่สาธารณะ การตั้งค่าเป็นคำแนะนำ ไม่ใช่การรับประกัน โปรดยืนยันกับกล้องของคุณเองทุกครั้ง",
+  footerEquipmentRisk:
+    "อุปกรณ์เสริมจำหน่ายภายใต้เงื่อนไขว่าคุณตรวจสอบความแน่นหนาก่อนใช้งานทุกครั้ง Smarter Capture ไม่รับผิดชอบต่อความเสียหายของกล้องหรืออุปกรณ์ที่เกิดจากการใช้งานหรือความบกพร่องของอุปกรณ์เสริม",
   footerIndependent: "คู่มืออิสระ ไม่มีส่วนเกี่ยวข้องกับผู้ผลิต",
 };
 
