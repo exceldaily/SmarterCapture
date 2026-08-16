@@ -96,7 +96,7 @@ export const accessoryProducts: AccessoryProduct[] = [
     warnings: ["Use a separate safety tether where a dropped camera could be lost."],
     material: "PC, TPU, carbon steel and stainless steel",
     retailPriceUsd: null,
-    catalogStatus: "future-bulk",
+    catalogStatus: "researching",
     fulfillmentMode: "MANUAL_ALIBABA",
     recommendationSceneIds: ["hiking", "walking-tour", "city", "airport", "fishing"],
     recommendationMounts: ["handheld", "unknown"],
@@ -263,6 +263,32 @@ export const accessoryProducts: AccessoryProduct[] = [
     recommendationSceneIds: ["motorcycle", "cycling", "walking-tour", "road-trip", "hiking", "vlog"],
     recommendationMounts: ["chest", "helmet", "handlebar", "vehicle", "tripod"],
     recommendationReason: "Moves one camera between mounts in seconds — the accessory that makes owning several mounts practical.",
+  },
+  {
+    id: "folding-selfie-tripod",
+    slug: "folding-selfie-tripod",
+    name: "Folding Selfie Stick Tripod",
+    shortName: "Folding Tripod Stick",
+    description:
+      "A pocketable aluminum selfie stick that unfolds into a tripod — extends to 0.4 m, tilts, and rotates 180 degrees.",
+    category: "everyday",
+    useCases: ["Vlogging", "Travel", "Talking to camera", "Timelapses", "Group shots"],
+    universal: true,
+    mountStandard: "Standard action-camera two-claw interface",
+    brandsSupported: ["GoPro", "DJI Osmo Action", "Insta360"],
+    compatibilityNote:
+      "Two-claw interface fits GoPro-style folding fingers directly; supplier lists GoPro Hero 13, Insta360 X5 and DJI Osmo Action 3/4/5 Pro.",
+    includedItems: ["Folding selfie stick tripod"],
+    warnings: ["Rated for action cameras — not for heavy mirrorless bodies."],
+    material: "Aluminum alloy and polycarbonate",
+    // Owner-approved launch price is $35, recorded in sourcing.ts; goes public
+    // when the product flips to "ready".
+    retailPriceUsd: null,
+    catalogStatus: "researching",
+    fulfillmentMode: "MANUAL_ALIBABA",
+    recommendationSceneIds: ["vlog", "talking-head", "walking-tour", "timelapse", "family", "tiktok"],
+    recommendationMounts: ["handheld", "selfie", "tripod", "selfie-stick"],
+    recommendationReason: "One pocketable grip that covers handheld, selfie-stick and tripod shots on a single trip.",
   },
 ];
 
