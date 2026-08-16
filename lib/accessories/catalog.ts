@@ -313,6 +313,30 @@ export const accessoryProducts: AccessoryProduct[] = [
     recommendationMounts: ["handheld", "gimbal"],
     recommendationReason: "Pocket gimbals ride unprotected in bags and pockets - this keeps the lens and screen safe between shots.",
   },
+
+  {
+    id: "wrist-lanyard",
+    slug: "wrist-lanyard",
+    name: "Anti-Lost Wrist Lanyard",
+    shortName: "Wrist Lanyard",
+    description: "An adjustable wrist lanyard that keeps the camera or selfie stick tethered to your hand.",
+    category: "everyday",
+    useCases: ["Water", "Travel", "Crowds", "Boats", "Heights"],
+    universal: true,
+    mountStandard: "Loop plus 1/4-20 screw attachment",
+    brandsSupported: ["GoPro", "DJI", "Insta360"],
+    compatibilityNote: "Supplier lists Insta360 X5, DJI Action 5/4, GoPro Hero and DJI Pocket 3/4; attaches to most grips and sticks.",
+    includedItems: ["Adjustable wrist lanyard"],
+    warnings: ["A lanyard is drop insurance, not a substitute for a secure mount."],
+    material: null,
+    // Owner-approved launch price is $10, recorded in sourcing.ts.
+    retailPriceUsd: null,
+    catalogStatus: "researching",
+    fulfillmentMode: "MANUAL_ALIBABA",
+    recommendationSceneIds: ["boating", "beach", "ocean", "theme-park", "city", "hiking"],
+    recommendationMounts: ["handheld", "selfie", "selfie-stick"],
+    recommendationReason: "The cheapest insurance on the site - one slip over water or a railing pays for it a hundred times over.",
+  },
 ];
 
 export function getAccessory(slug: string) {
