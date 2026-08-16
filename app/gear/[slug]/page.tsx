@@ -1,3 +1,5 @@
+import { ProductGallery } from "@/app/gear/product-gallery";
+import { getAccessoryMedia } from "@/lib/accessories/images";
 import { GearDisclaimer } from "@/app/gear/gear-disclaimer";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -29,6 +31,7 @@ export default async function AccessoryPage({ params }: PageProps<"/gear/[slug]"
   if (!product) notFound();
 
   const isReady = assessAccessoryLaunch(product.id).purchasable;
+  const media = getAccessoryMedia(product.slug);
 
   return (
     <div className="gear-page">
@@ -40,7 +43,7 @@ export default async function AccessoryPage({ params }: PageProps<"/gear/[slug]"
       <main className="product-page page-width">
         <div className="product-breadcrumb"><Link href="/gear"><T k="gearTitle" /></Link><span>/</span><span>{product.name}</span></div>
         <section className="product-hero">
-          <AccessoryVisual product={product} />
+          {media ? <ProductGallery media={media} name={product.name} /> : <AccessoryVisual product={product} />}
           <div className="product-summary">
             <span className="product-category">{product.category}</span>
             <h1>{product.name}</h1>
@@ -53,6 +56,17 @@ export default async function AccessoryPage({ params }: PageProps<"/gear/[slug]"
             <form method="post" action="/api/accessories/checkout">
               <input type="hidden" name="productId" value={product.id} />
               <input type="hidden" name="quantity" value="1" />
+              {media?.variants && (
+                <label className="product-variant">
+                  <span>{media.variantPrompt ?? "Option"}</span>
+                  <select name="variant" required defaultValue="">
+                    <option value="" disabled>Choose…</option>
+                    {media.variants.map((variant) => (
+                      <option key={variant.label} value={variant.label}>{variant.label}</option>
+                    ))}
+                  </select>
+                </label>
+              )}
               <button className="product-buy" type="submit" disabled={!isReady}>{isReady ? <T k="gearBuy" /> : <T k="gearCheckoutGated" />}</button>
             </form>
             {!isReady && <p className="product-gate"><ShieldCheck size={16} /> We are confirming the exact one-unit cost, delivery window and sample quality before accepting money.</p>}

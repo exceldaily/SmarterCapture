@@ -3600,6 +3600,50 @@ p { margin: 0; }
   display: block;
 }
 
+.product-gallery { display: flex; flex-direction: column; gap: 10px; }
+
+.product-gallery-main {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.product-gallery-main img { width: 100%; aspect-ratio: 1; object-fit: contain; display: block; }
+
+.product-gallery-thumbs { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.product-gallery-thumbs button {
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+.product-gallery-thumbs button.active { border-color: var(--signal); }
+.product-gallery-thumbs img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+.product-variant { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.product-variant span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.product-variant select {
+  height: 46px;
+  padding: 0 12px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  font-size: 14.5px;
+}
+
 /* --- gear equipment-risk disclaimer ---------------------------------------- */
 
 .gear-disclaimer {

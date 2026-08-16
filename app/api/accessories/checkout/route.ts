@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { assessAccessoryLaunch } from "@/lib/accessories/commerce";
+import { getAccessoryMedia } from "@/lib/accessories/images";
 import { getCanonicalAppUrl, getCommerceReadiness, getStripeClient } from "@/lib/accessories/server-config";
 
 export const runtime = "nodejs";
@@ -37,6 +38,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "This checkout currently supports one approved item at a time." }, { status: 400 });
   }
 
+  // Colour / camera-fit choice: required when the product has variants, and
+  // only ever accepted from the approved list — never free text.
+  const media = getAccessoryMedia(productId);
+  const variantValue = formData.get("variant");
+  let customerVariant: string | null = null;
+  if (media?.variants?.length) {
+    if (typeof variantValue !== "string" || !media.variants.some((v) => v.label === variantValue)) {
+      return NextResponse.json({ error: "Please choose an option for this product." }, { status: 400 });
+    }
+    customerVariant = variantValue;
+  }
+
   const launch = assessAccessoryLaunch(productId);
   if (!launch.purchasable || !launch.product || !launch.sourcing || !launch.policy) {
     return NextResponse.json(
@@ -65,7 +78,7 @@ export async function POST(request: Request) {
     unit_amount_cents: String(unitAmountCents),
     supplier_name: primarySupplier.supplierName,
     supplier_product_url: primarySupplier.alibabaProductUrl,
-    supplier_variant: launch.policy.approvedSupplierVariant,
+    supplier_variant: customerVariant ? `${launch.policy.approvedSupplierVariant} — customer chose: ${customerVariant}` : launch.policy.approvedSupplierVariant,
     supplier_estimated_cost_cents: String(supplierEstimatedCostCents),
     expected_profit_cents: String(expectedProfitCents),
   };
@@ -93,7 +106,7 @@ export async function POST(request: Request) {
         currency: "usd",
         unit_amount: unitAmountCents,
         product_data: {
-          name: launch.product.name,
+          name: customerVariant ? `${launch.product.name} (${customerVariant})` : launch.product.name,
           description: launch.product.description,
           metadata: { product_id: launch.product.id },
         },
