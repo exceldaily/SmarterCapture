@@ -34,7 +34,7 @@ manufacturer photos. Options to raise with the user:
      (roundness, whitespace, big cards, light background, scroll reveals)
 Ask which before rebuilding — this decides the whole direction.
 
-### 2. Camera name truncation — FIXED, needs visual confirmation
+### 2. Camera name truncation — FIXED and visually confirmed (2026-08-16)
 The user reported names showing as "Osmo Acti…" / "HERO13 …".
 Fixed in `app/globals.css`: `.camera-copy strong` no longer uses
 `white-space: nowrap` + ellipsis (it wraps to two lines), and `.camera-grid`

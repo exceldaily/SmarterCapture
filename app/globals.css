@@ -2697,6 +2697,17 @@ p { margin: 0; }
 
 .filter-rail::-webkit-scrollbar { display: none; }
 
+/* Desktop has no touch scroll and the scrollbar is hidden, so a one-line rail
+   is unusable with a mouse — wrap the chips into rows instead. Phones keep the
+   swipeable single line. */
+@media (min-width: 768px) {
+  .filter-rail {
+    flex-wrap: wrap;
+    row-gap: 8px;
+    overflow-x: visible;
+  }
+}
+
 .filter-rail button {
   display: inline-flex;
   align-items: center;
