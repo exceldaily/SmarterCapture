@@ -51,13 +51,13 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       url: baseUrl,
       siteName: brand.name,
-      images: [{ url: `${baseUrl}/og-v2.png`, width: 1736, height: 905, alt: `${brand.name} camera settings guide` }],
+      images: [{ url: `${baseUrl}/og-smartercapture.png`, width: 1200, height: 630, alt: `${brand.name} camera settings guide` }],
     },
     twitter: {
       card: "summary_large_image",
       title: `${brand.name} — Camera Settings, Solved`,
       description: brand.tagline,
-      images: [`${baseUrl}/og-v2.png`],
+      images: [`${baseUrl}/og-smartercapture.png`],
     },
   };
 }
