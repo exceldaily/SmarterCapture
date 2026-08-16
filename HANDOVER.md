@@ -147,3 +147,40 @@ that is what `scripts/validate.ts` protects.
   8 fishing recipes removed (31 remain). The fishing scene itself remains.
 - Still pending: Stripe keys (checkout stays gated), admin write controls,
   transactional email.
+
+---
+
+## 2026-08-16 — i18n v1 + multi-currency display
+
+Seven locales: en, es, fr, de, pt, ja, th. Locale is client-side only
+(localStorage key `sc-locale`, browser-language detection, fallback en); the
+server always renders English and the client re-renders after hydration, so
+there are no locale routes and no SEO change.
+
+- `lib/i18n/index.ts` — Locale type, typed `Dictionary` interface (118 keys),
+  `t()` with `{var}` interpolation, storage + detection helpers.
+- `lib/i18n/dictionaries.ts` — hand-written translations, chrome strings only.
+- `lib/i18n/currency.ts` — locale→currency (en USD, es/fr/de/pt EUR, ja JPY,
+  th THB), static FX table (approx mid-Aug 2026), `formatPrice()`. Non-USD is
+  always shown with a `≈` prefix plus the exact USD amount, because **USD is
+  the only checkout currency** (Stripe Checkout handles buyer-local
+  presentation on its own page).
+- `app/locale-provider.tsx` — context via useSyncExternalStore; also exports
+  `useT()` and a `<T k="..." />` leaf for server components.
+- `app/language-switcher.tsx` — select showing each locale's own name; lives
+  in the site header (hidden <700px), the gear header, and as a sixth
+  mobile-nav tile.
+- Wired into `app/camcue-app.tsx`, `app/gear/page.tsx`,
+  `app/gear/gear-catalog.tsx`, `app/gear/[slug]/page.tsx` (price uses
+  `app/gear/localized-price.tsx`).
+
+**Deliberately still English in v1** (documented in `lib/i18n/index.ts`):
+camera model names, setting VALUES (RockSteady, D-Log M, 4K, FPS), scene and
+option names, and ALL engine-generated prose (why-it-works, warnings,
+mistakes, what-if answers, on-camera menu paths). Machine-translating
+settings advice risks accuracy, and camera menus are mostly English anyway.
+Also untranslated: Learn cards, recipes/bag hero copy, provenance panel,
+toasts, search placeholders, metadata titles, footer link columns.
+
+Verified: `npx tsc --noEmit`, `npm run lint`, `npm run build`,
+`npm run validate` all clean.

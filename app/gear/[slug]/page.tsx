@@ -5,7 +5,10 @@ import { ArrowLeft, BadgeCheck, CircleAlert, Clock3, Package, ShieldCheck } from
 import { accessoryProducts, getAccessory } from "@/lib/accessories/catalog";
 import { assessAccessoryLaunch } from "@/lib/accessories/commerce";
 import { brand } from "@/lib/camcue/brand";
+import { LanguageSwitcher } from "@/app/language-switcher";
+import { T } from "@/app/locale-provider";
 import { AccessoryVisual } from "../accessory-visual";
+import { LocalizedPrice } from "../localized-price";
 
 export function generateStaticParams() {
   return accessoryProducts.map((product) => ({ slug: product.slug }));
@@ -30,11 +33,11 @@ export default async function AccessoryPage({ params }: PageProps<"/gear/[slug]"
     <div className="gear-page">
       <header className="gear-site-header">
         <Link href="/" className="gear-wordmark"><span className="gear-mark" />{brand.wordmark}</Link>
-        <nav aria-label="Gear navigation"><Link href="/gear"><ArrowLeft size={15} /> All gear</Link><Link href="/" >Camera assistant</Link></nav>
+        <nav aria-label="Gear navigation"><Link href="/gear"><ArrowLeft size={15} /> <T k="gearNavAllGear" /></Link><Link href="/" ><T k="gearNavAssistant" /></Link><LanguageSwitcher /></nav>
       </header>
 
       <main className="product-page page-width">
-        <div className="product-breadcrumb"><Link href="/gear">Suggested Accessories</Link><span>/</span><span>{product.name}</span></div>
+        <div className="product-breadcrumb"><Link href="/gear"><T k="gearTitle" /></Link><span>/</span><span>{product.name}</span></div>
         <section className="product-hero">
           <AccessoryVisual product={product} />
           <div className="product-summary">
@@ -43,13 +46,13 @@ export default async function AccessoryPage({ params }: PageProps<"/gear/[slug]"
             <p>{product.description}</p>
             {product.universal && <div className="product-universal"><BadgeCheck size={17} /> Universal action-camera mount</div>}
             <div className="product-price">
-              {isReady ? <strong>${product.retailPriceUsd!.toFixed(2)}</strong> : <strong>Price pending verification</strong>}
-              <small>{isReady ? "Shipping calculated for the destination" : "Not available to buy yet"}</small>
+              {isReady ? <strong><LocalizedPrice usd={product.retailPriceUsd!} /></strong> : <strong><T k="gearPricePending" /></strong>}
+              <small>{isReady ? <T k="gearPriceShipping" /> : <T k="gearPriceUnavailable" />}</small>
             </div>
             <form method="post" action="/api/accessories/checkout">
               <input type="hidden" name="productId" value={product.id} />
               <input type="hidden" name="quantity" value="1" />
-              <button className="product-buy" type="submit" disabled={!isReady}>{isReady ? "Buy accessory" : "Checkout opens after verification"}</button>
+              <button className="product-buy" type="submit" disabled={!isReady}>{isReady ? <T k="gearBuy" /> : <T k="gearCheckoutGated" />}</button>
             </form>
             {!isReady && <p className="product-gate"><ShieldCheck size={16} /> We are confirming the exact one-unit cost, delivery window and sample quality before accepting money.</p>}
           </div>

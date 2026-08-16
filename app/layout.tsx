@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Archivo, Inter, JetBrains_Mono } from "next/font/google";
 import { headers } from "next/headers";
 import { brand } from "@/lib/camcue/brand";
+import { LocaleProvider } from "@/app/locale-provider";
 import { cameras } from "@/lib/camcue/data/cameras";
 import "./globals.css";
 
@@ -72,7 +73,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" data-scroll-behavior="smooth" className={`${archivo.variable} ${inter.variable} ${jetbrains.variable}`}>
-      <body>{children}</body>
+      <body>
+        <LocaleProvider>{children}</LocaleProvider>
+      </body>
     </html>
   );
 }

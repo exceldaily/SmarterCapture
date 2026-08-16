@@ -5,9 +5,25 @@ import Link from "next/link";
 import { ArrowRight, BadgeCheck, CircleAlert } from "lucide-react";
 import { accessoryCategories, accessoryProducts } from "@/lib/accessories/catalog";
 import type { AccessoryCategory } from "@/lib/accessories/types";
+import type { DictionaryKey } from "@/lib/i18n";
+import { useT } from "@/app/locale-provider";
 import { AccessoryVisual } from "./accessory-visual";
 
+// Translation keys for the category rail; the catalog itself stays
+// English-only data (see lib/i18n/index.ts for the v1 scope decision).
+const categoryKey: Record<"all" | AccessoryCategory, DictionaryKey> = {
+  all: "gearCatAll",
+  pov: "gearCatPov",
+  water: "gearCatWater",
+  travel: "gearCatTravel",
+  vehicle: "gearCatVehicle",
+  sports: "gearCatSports",
+  everyday: "gearCatEveryday",
+  mounts: "gearCatMounts",
+};
+
 export function GearCatalog() {
+  const t = useT();
   const [category, setCategory] = useState<"all" | AccessoryCategory>("all");
   const products = useMemo(
     () => accessoryProducts.filter((product) => category === "all" || product.category === category),
@@ -24,7 +40,7 @@ export function GearCatalog() {
             onClick={() => setCategory(item.id)}
             aria-pressed={category === item.id}
           >
-            {item.label}
+            {t(categoryKey[item.id])}
           </button>
         ))}
       </div>
@@ -49,9 +65,9 @@ export function GearCatalog() {
               </div>
               <div className="gear-card-foot">
                 <span className={`gear-status ${product.catalogStatus}`}>
-                  {product.catalogStatus === "ready" ? "Ready to order" : product.catalogStatus === "future-bulk" ? "Future bulk candidate" : "Sourcing review"}
+                  {product.catalogStatus === "ready" ? t("gearStatusReady") : product.catalogStatus === "future-bulk" ? t("gearStatusFuture") : t("gearStatusResearch")}
                 </span>
-                <Link href={`/gear/${product.slug}`}>View accessory <ArrowRight size={15} /></Link>
+                <Link href={`/gear/${product.slug}`}>{t("gearView")} <ArrowRight size={15} /></Link>
               </div>
             </div>
           </article>

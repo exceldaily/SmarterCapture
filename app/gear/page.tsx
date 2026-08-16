@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Camera, ShieldCheck } from "lucide-react";
 import { brand } from "@/lib/camcue/brand";
+import { LanguageSwitcher } from "@/app/language-switcher";
+import { T } from "@/app/locale-provider";
 import { GearCatalog } from "./gear-catalog";
 
 export const metadata: Metadata = {
@@ -14,15 +16,15 @@ export default function GearPage() {
     <div className="gear-page">
       <header className="gear-site-header">
         <Link href="/" className="gear-wordmark"><span className="gear-mark" />{brand.wordmark}</Link>
-        <nav aria-label="Gear navigation"><Link href="/"><ArrowLeft size={15} /> Camera assistant</Link><Link href="/gear" className="active">Gear</Link></nav>
+        <nav aria-label="Gear navigation"><Link href="/"><ArrowLeft size={15} /> <T k="gearNavAssistant" /></Link><Link href="/gear" className="active"><T k="gearNavGear" /></Link><LanguageSwitcher /></nav>
       </header>
 
       <main className="page-width">
         <section className="gear-hero">
           <div>
-            <span>CURATED FOR THE SHOT</span>
-            <h1>Suggested Accessories</h1>
-            <p>Useful gear for getting more out of your action camera.</p>
+            <span><T k="gearEyebrow" /></span>
+            <h1><T k="gearTitle" /></h1>
+            <p><T k="gearSub" /></p>
           </div>
           <aside>
             <ShieldCheck size={22} />
