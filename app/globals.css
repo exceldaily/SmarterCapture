@@ -3585,6 +3585,41 @@ p { margin: 0; }
 }
 .legal-back a:hover { color: var(--signal); }
 
+/* --- gear equipment-risk disclaimer ---------------------------------------- */
+
+.gear-disclaimer {
+  margin: 28px 0 8px;
+  padding: 20px 22px;
+  border: 1px solid rgba(217, 148, 37, 0.45);
+  border-left: 4px solid var(--warn);
+  border-radius: var(--radius-lg);
+  background: #fdf7ea;
+}
+
+.gear-disclaimer-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: #7a5410;
+}
+
+.gear-disclaimer-head h2 {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.gear-disclaimer p {
+  margin-bottom: 10px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: #5c4310;
+}
+
+.gear-disclaimer p:last-child { margin-bottom: 0; }
+
 /* --- styleguide (internal design review) ----------------------------------- */
 
 .styleguide { width: min(1100px, calc(100% - 40px)); margin: 0 auto; padding: 56px 0 90px; }

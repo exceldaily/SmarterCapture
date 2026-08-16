@@ -1,3 +1,4 @@
+import { GearDisclaimer } from "@/app/gear/gear-disclaimer";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Camera, ShieldCheck } from "lucide-react";
@@ -39,6 +40,8 @@ export default function GearPage() {
         </section>
 
         <GearCatalog />
+
+        <GearDisclaimer />
       </main>
 
       <footer className="gear-footer"><span>{brand.domain}</span><p>The camera assistant remains the product. Gear is an optional, low-pressure recommendation.</p></footer>

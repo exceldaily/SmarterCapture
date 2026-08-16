@@ -1,3 +1,4 @@
+import { GearDisclaimer } from "@/app/gear/gear-disclaimer";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -89,6 +90,8 @@ export default async function AccessoryPage({ params }: PageProps<"/gear/[slug]"
           <Package size={20} />
           <div><span>WHY SMARTER CAPTURE MAY SUGGEST IT</span><p>{product.recommendationReason}</p></div>
         </section>
+
+        <GearDisclaimer />
       </main>
     </div>
   );
