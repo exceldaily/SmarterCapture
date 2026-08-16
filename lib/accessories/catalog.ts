@@ -290,6 +290,29 @@ export const accessoryProducts: AccessoryProduct[] = [
     recommendationMounts: ["handheld", "selfie", "tripod", "selfie-stick"],
     recommendationReason: "One pocketable grip that covers handheld, selfie-stick and tripod shots on a single trip.",
   },
+  {
+    id: "pocket-lens-cover",
+    slug: "pocket-lens-cover",
+    name: "Pocket Camera Flip Lens Cover",
+    shortName: "Pocket Lens Cover",
+    description: "A flip-open protective cover that shields a pocket gimbal camera's lens and screen between shots.",
+    category: "everyday",
+    useCases: ["Travel", "Vlogging", "Everyday carry", "Bag protection"],
+    universal: false,
+    mountStandard: "Camera-specific fitted cover",
+    brandsSupported: ["DJI Osmo Pocket"],
+    compatibilityNote: "Supplier lists DJI Osmo Pocket 4 Pro; confirm your exact Pocket model before ordering.",
+    includedItems: ["Flip lens/screen cover"],
+    warnings: ["A cover protects against scratches and knocks, not drops onto hard ground."],
+    material: null,
+    // Owner-approved launch price is $35, recorded in sourcing.ts.
+    retailPriceUsd: null,
+    catalogStatus: "researching",
+    fulfillmentMode: "MANUAL_ALIBABA",
+    recommendationSceneIds: ["walking-tour", "city", "airport", "road-trip", "vlog"],
+    recommendationMounts: ["handheld", "gimbal"],
+    recommendationReason: "Pocket gimbals ride unprotected in bags and pockets - this keeps the lens and screen safe between shots.",
+  },
 ];
 
 export function getAccessory(slug: string) {
