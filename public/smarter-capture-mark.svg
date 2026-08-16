@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title description">
+  <title id="title">Smarter Capture</title>
+  <desc id="description">A minimal action camera with an orange lens and capture corner.</desc>
+  <rect x="16" y="48" width="224" height="160" rx="36" fill="#171A1B"/>
+  <path d="M52 108V84H84" fill="none" stroke="#FF4A17" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="166" cy="128" r="54" fill="#FF4A17"/>
+  <circle cx="166" cy="128" r="34" fill="#171A1B"/>
+</svg>

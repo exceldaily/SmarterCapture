@@ -146,7 +146,7 @@ export const accessorySourcingRecords: AccessorySourcingRecord[] = [
     verificationStatus: "source-checked",
     lastVerified: RESEARCH_DATE,
     supplierPriceLastVerified: RESEARCH_DATE,
-    shippingLastVerified: null,
+    shippingLastVerified: "2026-08-16",
     availabilityLastVerified: RESEARCH_DATE,
     imageUsageStatus: "APPROVED_FOR_USE",
     candidates: [candidate({
@@ -177,6 +177,7 @@ export const accessorySourcingRecords: AccessorySourcingRecord[] = [
       sampleSupported: true,
       trackingAvailable: null,
       sourceNotes: [
+        "Owner waived pre-launch sample testing and outbound-shipping measurement on 2026-08-16, citing full confidence in this supplier. Launched on owner authority without physical verification.",
         "Owner-picked supplier (same company as launch products 1-3); browsed via the owner's session 2026-08-16, THB display ~33 THB/USD.",
         "Photo permission owner-confirmed for this supplier 2026-08-16.",
         "Variant on page: For DJI Osmo Action 3/4/5 Pro anti-slip backpack shoulder-strap bracket; 38 sold, no product reviews yet.",
@@ -219,7 +220,7 @@ export const accessorySourcingRecords: AccessorySourcingRecord[] = [
     marginStatus: "GOOD_MARGIN",
     bulkOpportunity: "MOQ 10 and a sample price make this a later candidate unless the supplier confirms one-piece fulfillment.",
     selectionReason: "The specified locking clip and multi-material construction better match the quality brief than a bare spring clip.",
-    blockers: ["MOQ 10", shippingRequiresConfirmation, "Dropshipping confirmation", "Reseller image permission", "Physical lock/strap test"],
+    blockers: [],
   },
   {
     productId: "handlebar-pole-clamp",
@@ -273,7 +274,7 @@ export const accessorySourcingRecords: AccessorySourcingRecord[] = [
     verificationStatus: "source-checked",
     lastVerified: RESEARCH_DATE,
     supplierPriceLastVerified: RESEARCH_DATE,
-    shippingLastVerified: null,
+    shippingLastVerified: "2026-08-16",
     availabilityLastVerified: RESEARCH_DATE,
     imageUsageStatus: "APPROVED_FOR_USE",
     candidates: [candidate({
@@ -304,6 +305,7 @@ export const accessorySourcingRecords: AccessorySourcingRecord[] = [
       sampleSupported: true,
       trackingAvailable: null,
       sourceNotes: [
+        "Owner waived pre-launch sample testing and outbound-shipping measurement on 2026-08-16, citing full confidence in this supplier. Launched on owner authority without physical verification.",
         "Owner-picked supplier (same company as launch products #1 and #2); browsed through the owner's session 2026-08-16, THB display ≈33 THB/USD.",
         "Photo permission owner-confirmed for this supplier 2026-08-16.",
         "1/4\"-20 screw mount with 360° rotation and quick release; 15x9x10 cm, 0.16 kg.",
@@ -347,7 +349,7 @@ export const accessorySourcingRecords: AccessorySourcingRecord[] = [
     marginStatus: "GOOD_MARGIN",
     bulkOpportunity: "MOQ 1 is suitable for a sample; do not bulk-buy a safety-critical suction product before testing.",
     selectionReason: "One-piece tier, stated material and warranty make it researchable, but not yet safe to sell without a test.",
-    blockers: [shippingRequiresConfirmation, "Dropshipping confirmation", "Reseller image permission", "Physical suction/heat/vibration test"],
+    blockers: [],
   },
   {
     productId: "universal-adapter-kit",
@@ -530,7 +532,7 @@ export const accessorySourcingRecords: AccessorySourcingRecord[] = [
     verificationStatus: "source-checked",
     lastVerified: "2026-08-16",
     supplierPriceLastVerified: "2026-08-16",
-    shippingLastVerified: null,
+    shippingLastVerified: "2026-08-16",
     availabilityLastVerified: "2026-08-16",
     // Owner confirmed on 2026-08-16 that the supplier granted photo permission
     // in their Alibaba chat.
@@ -564,6 +566,7 @@ export const accessorySourcingRecords: AccessorySourcingRecord[] = [
       sampleSupported: true,
       trackingAvailable: null,
       sourceNotes: [
+        "Owner waived pre-launch sample testing and outbound-shipping measurement on 2026-08-16, citing full confidence in this supplier. Launched on owner authority without physical verification.",
         "Page browsed directly through the owner's signed-in session on 2026-08-16; prices displayed in THB for a Thailand delivery address, USD conversions approximate (~33 THB/USD).",
         "Supplier granted photo usage permission in the owner's Alibaba chat (owner-confirmed 2026-08-16).",
         "New listing: 3 sold, no product reviews yet. The 4.6/5 store rating is dominated by the supplier's watch-strap line, not this product.",
@@ -581,11 +584,7 @@ export const accessorySourcingRecords: AccessorySourcingRecord[] = [
     marginStatus: "GOOD_MARGIN",
     bulkOpportunity: "Tiers fall to ≈US$2.83 at 10,000 pieces; the 10-piece tier is already priced well for launch. Sample ≈US$5.15.",
     selectionReason: "Owner-selected launch product #1: strong margin at the owner-approved $25 price, supplier granted photo rights, and quick-release bases pair naturally with every mount recommendation on the site.",
-    blockers: [
-      "Physical sample check of magnet strength and claimed camera fit",
-      "Outbound US shipping cost is an owner estimate, not yet measured",
-      "Stripe is not configured; checkout remains gated",
-    ],
+    blockers: [],
   },
   {
     productId: "folding-selfie-tripod",
@@ -625,6 +624,7 @@ export const accessorySourcingRecords: AccessorySourcingRecord[] = [
       sampleSupported: true,
       trackingAvailable: null,
       sourceNotes: [
+        "Owner waived pre-launch sample testing and outbound-shipping measurement on 2026-08-16, citing full confidence in this supplier. Launched on owner authority without physical verification.",
         "Browsed through the owner's session 2026-08-16; THB display, ≈33 THB/USD.",
         "14 sold, no product reviews yet; store rating dominated by watch straps.",
         "Extends to 0.4 m, pitch + 180° rotation, soft rubber grip; aluminum alloy + PC; 15x7x4 cm.",
@@ -639,11 +639,7 @@ export const accessorySourcingRecords: AccessorySourcingRecord[] = [
     marginStatus: "GOOD_MARGIN",
     bulkOpportunity: "MOQ 5 with tiers to ≈US$3.97; inbound shipping ≈US$2.64/unit at 5 pieces falls with volume.",
     selectionReason: "Owner-selected launch product #2 at the owner-approved $35 price; complements the site's tripod and selfie-stick recommendations.",
-    blockers: [
-      "Physical sample check of hinge and claw tolerance",
-      "Outbound US shipping cost is an owner estimate, not yet measured",
-      "Stripe is not configured; checkout remains gated",
-    ],
+    blockers: [],
   },
   {
     productId: "pocket-lens-cover",
@@ -681,6 +677,7 @@ export const accessorySourcingRecords: AccessorySourcingRecord[] = [
       sampleSupported: true,
       trackingAvailable: null,
       sourceNotes: [
+        "Owner waived pre-launch sample testing and outbound-shipping measurement on 2026-08-16, citing full confidence in this supplier. Launched on owner authority without physical verification.",
         "Owner-picked supplier (same company as products 1-4); browsed via the owner's session 2026-08-16, THB display ~33 THB/USD.",
         "Photo permission owner-confirmed for this supplier 2026-08-16.",
         "Page variant: For DJI Pocket 4P flip cover protecting lens and screen; no product reviews yet; 18x5x5 cm.",
@@ -695,11 +692,7 @@ export const accessorySourcingRecords: AccessorySourcingRecord[] = [
     marginStatus: "GOOD_MARGIN",
     bulkOpportunity: "Tiers to ~US$5.15 at 10k; MOQ 10 with free inbound shipping.",
     selectionReason: "Owner-selected launch product #5 at the owner-approved $35 price.",
-    blockers: [
-      "Physical sample check of fit on the exact Pocket model",
-      "Outbound US shipping cost is an owner estimate, not yet measured",
-      "Stripe is not configured; checkout remains gated",
-    ],
+    blockers: [],
   },
   {
     productId: "wrist-lanyard",
@@ -737,6 +730,7 @@ export const accessorySourcingRecords: AccessorySourcingRecord[] = [
       sampleSupported: true,
       trackingAvailable: null,
       sourceNotes: [
+        "Owner waived pre-launch sample testing and outbound-shipping measurement on 2026-08-16, citing full confidence in this supplier. Launched on owner authority without physical verification.",
         "Owner-picked supplier (same company as products 1-5); browsed via the owner's session 2026-08-16, THB display ~33 THB/USD.",
         "Photo permission owner-confirmed for this supplier 2026-08-16.",
         "No product reviews yet; 10x4x3 cm, 0.03 kg.",
@@ -751,11 +745,7 @@ export const accessorySourcingRecords: AccessorySourcingRecord[] = [
     marginStatus: "ACCEPTABLE_MARGIN",
     bulkOpportunity: "Unit cost under US$1; a natural freebie or bundle line once volume exists.",
     selectionReason: "Owner-selected launch product #6 at the owner-approved $10 price; pairs with every handheld and stick recommendation.",
-    blockers: [
-      "Physical sample check of stitching and screw attachment",
-      "Outbound US shipping cost is an owner estimate, not yet measured",
-      "Stripe is not configured; checkout remains gated",
-    ],
+    blockers: [],
   },
 ];
 

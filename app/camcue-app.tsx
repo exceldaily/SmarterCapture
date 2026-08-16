@@ -151,9 +151,8 @@ function sceneTechLine(scene: SceneDef): string[] {
 
 function CamMark() {
   return (
-    <span className="cam-mark" aria-hidden="true">
-      <span className="cam-mark-dot" />
-    </span>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/logo.png" alt="" className="cam-mark-img" aria-hidden="true" />
   );
 }
 

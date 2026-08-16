@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title description">
+  <title id="title">Smarter Capture advanced mark</title>
+  <desc id="description">A reversed SC lens monogram framed by four precision capture corners.</desc>
+  <g fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 82V50C32 40 40 32 50 32H82"/>
+    <path d="M174 32H206C216 32 224 40 224 50V82"/>
+    <path d="M224 174V206C224 216 216 224 206 224H174"/>
+    <path d="M82 224H50C40 224 32 216 32 206V174"/>
+  </g>
+  <path d="M174 78A66 66 0 1 0 176 176" fill="none" stroke="#FF4A17" stroke-width="22" stroke-linecap="butt"/>
+  <path d="M164 82C145 66 111 66 94 80C78 93 83 109 107 115L144 124C168 130 176 147 161 164C146 181 111 184 88 166" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="171" cy="120" r="6" fill="#48D5E6"/>
+</svg>

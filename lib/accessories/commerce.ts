@@ -9,9 +9,54 @@ export interface AccessoryLaunchPolicy {
   approvedSupplierVariant: string;
 }
 
-// Add a policy here only after the destination quotes, delivery range and
-// physical sample have been approved. An empty map is the final checkout gate.
-export const accessoryLaunchPolicies: Partial<Record<string, AccessoryLaunchPolicy>> = {};
+// Policies below were approved by the owner on 2026-08-16. Shipping is
+// absorbed into each retail price (flat $0 at checkout), US-only for launch,
+// with a 10-25 business-day window reflecting the manual Alibaba route.
+// The owner explicitly waived pre-launch physical samples for this supplier.
+export const accessoryLaunchPolicies: Partial<Record<string, AccessoryLaunchPolicy>> = {
+  "magnetic-quick-release-base": {
+    productId: "magnetic-quick-release-base",
+    flatShippingUsd: 0,
+    allowedCountries: ["US"],
+    deliveryBusinessDays: { minimum: 10, maximum: 25 },
+    approvedSupplierVariant: "Default colour, dual-interface base",
+  },
+  "folding-selfie-tripod": {
+    productId: "folding-selfie-tripod",
+    flatShippingUsd: 0,
+    allowedCountries: ["US"],
+    deliveryBusinessDays: { minimum: 10, maximum: 25 },
+    approvedSupplierVariant: "Default colour",
+  },
+  "suction-cup-mount": {
+    productId: "suction-cup-mount",
+    flatShippingUsd: 0,
+    allowedCountries: ["US"],
+    deliveryBusinessDays: { minimum: 10, maximum: 25 },
+    approvedSupplierVariant: "For Go Pro (1/4-20 screw) variant",
+  },
+  "backpack-strap-clip": {
+    productId: "backpack-strap-clip",
+    flatShippingUsd: 0,
+    allowedCountries: ["US"],
+    deliveryBusinessDays: { minimum: 10, maximum: 25 },
+    approvedSupplierVariant: "For DJI Osmo Action 3/4/5 Pro variant",
+  },
+  "pocket-lens-cover": {
+    productId: "pocket-lens-cover",
+    flatShippingUsd: 0,
+    allowedCountries: ["US"],
+    deliveryBusinessDays: { minimum: 10, maximum: 25 },
+    approvedSupplierVariant: "For DJI Pocket 4P variant",
+  },
+  "wrist-lanyard": {
+    productId: "wrist-lanyard",
+    flatShippingUsd: 0,
+    allowedCountries: ["US"],
+    deliveryBusinessDays: { minimum: 10, maximum: 25 },
+    approvedSupplierVariant: "Default colour",
+  },
+};
 
 export function assessAccessoryLaunch(productId: string) {
   const product = accessoryProducts.find((item) => item.id === productId);

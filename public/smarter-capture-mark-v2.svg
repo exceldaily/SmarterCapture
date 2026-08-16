@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title description">
+  <title id="title">Smarter Capture</title>
+  <desc id="description">A minimal open camera lens held by two orange capture corners.</desc>
+  <path d="M44 120V72C44 61 53 52 64 52H120" fill="none" stroke="#FF4A17" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M136 204H192C203 204 212 195 212 184V128" fill="none" stroke="#FF4A17" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="128" cy="128" r="55" fill="none" stroke="#171A1B" stroke-width="24" stroke-linecap="butt" stroke-dasharray="270 76" transform="rotate(-43 128 128)"/>
+  <circle cx="128" cy="128" r="18" fill="#171A1B"/>
+</svg>

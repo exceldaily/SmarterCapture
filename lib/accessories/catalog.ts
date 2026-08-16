@@ -95,8 +95,8 @@ export const accessoryProducts: AccessoryProduct[] = [
     includedItems: ["Backpack strap clip", "Quick-release camera plate"],
     warnings: ["Use a separate safety tether where a dropped camera could be lost."],
     material: "PC, TPU, carbon steel and stainless steel",
-    retailPriceUsd: null,
-    catalogStatus: "researching",
+    retailPriceUsd: 25,
+    catalogStatus: "ready",
     fulfillmentMode: "MANUAL_ALIBABA",
     recommendationSceneIds: ["hiking", "walking-tour", "city", "airport", "fishing"],
     recommendationMounts: ["handheld", "unknown"],
@@ -139,8 +139,8 @@ export const accessoryProducts: AccessoryProduct[] = [
     includedItems: ["Suction mount", "Camera adapter"],
     warnings: ["Never rely on suction alone where detachment could injure someone; clean the surface and use a tether."],
     material: "ABS and silicone",
-    retailPriceUsd: null,
-    catalogStatus: "researching",
+    retailPriceUsd: 45,
+    catalogStatus: "ready",
     fulfillmentMode: "MANUAL_ALIBABA",
     recommendationSceneIds: ["road-trip", "boating", "motorsports"],
     recommendationMounts: ["vehicle"],
@@ -257,8 +257,8 @@ export const accessoryProducts: AccessoryProduct[] = [
     // (recommendedRetailPriceUsd). It becomes the public price when the
     // product flips to "ready" — the validator forbids pricing a product
     // customers cannot buy yet.
-    retailPriceUsd: null,
-    catalogStatus: "researching",
+    retailPriceUsd: 25,
+    catalogStatus: "ready",
     fulfillmentMode: "MANUAL_ALIBABA",
     recommendationSceneIds: ["motorcycle", "cycling", "walking-tour", "road-trip", "hiking", "vlog"],
     recommendationMounts: ["chest", "helmet", "handlebar", "vehicle", "tripod"],
@@ -283,8 +283,8 @@ export const accessoryProducts: AccessoryProduct[] = [
     material: "Aluminum alloy and polycarbonate",
     // Owner-approved launch price is $35, recorded in sourcing.ts; goes public
     // when the product flips to "ready".
-    retailPriceUsd: null,
-    catalogStatus: "researching",
+    retailPriceUsd: 35,
+    catalogStatus: "ready",
     fulfillmentMode: "MANUAL_ALIBABA",
     recommendationSceneIds: ["vlog", "talking-head", "walking-tour", "timelapse", "family", "tiktok"],
     recommendationMounts: ["handheld", "selfie", "tripod", "selfie-stick"],
@@ -306,8 +306,8 @@ export const accessoryProducts: AccessoryProduct[] = [
     warnings: ["A cover protects against scratches and knocks, not drops onto hard ground."],
     material: null,
     // Owner-approved launch price is $35, recorded in sourcing.ts.
-    retailPriceUsd: null,
-    catalogStatus: "researching",
+    retailPriceUsd: 35,
+    catalogStatus: "ready",
     fulfillmentMode: "MANUAL_ALIBABA",
     recommendationSceneIds: ["walking-tour", "city", "airport", "road-trip", "vlog"],
     recommendationMounts: ["handheld", "gimbal"],
@@ -330,8 +330,8 @@ export const accessoryProducts: AccessoryProduct[] = [
     warnings: ["A lanyard is drop insurance, not a substitute for a secure mount."],
     material: null,
     // Owner-approved launch price is $10, recorded in sourcing.ts.
-    retailPriceUsd: null,
-    catalogStatus: "researching",
+    retailPriceUsd: 10,
+    catalogStatus: "ready",
     fulfillmentMode: "MANUAL_ALIBABA",
     recommendationSceneIds: ["boating", "beach", "ocean", "theme-park", "city", "hiking"],
     recommendationMounts: ["handheld", "selfie", "selfie-stick"],

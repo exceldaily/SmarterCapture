@@ -23,7 +23,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Checkout must begin on the Smarter Capture site." }, { status: 403 });
   }
 
-  const formData = await request.formData();
+  let formData: FormData;
+  try {
+    formData = await request.formData();
+  } catch {
+    return NextResponse.json({ error: "Checkout expects a form submission." }, { status: 400 });
+  }
   const productId = formData.get("productId");
   const quantityValue = formData.get("quantity");
   const quantity = typeof quantityValue === "string" ? Number.parseInt(quantityValue, 10) : 1;
