@@ -34,7 +34,7 @@ export default function GearPage() {
         </section>
 
         <section className="gear-intro-strip">
-          <span><Camera size={16} /> Six products live, more in research</span>
+          <span><Camera size={16} /> Six focused products, every one purchasable</span>
           <span>No batteries, filters or model-specific fit guesswork</span>
           <span>Product photos used with supplier permission</span>
         </section>
