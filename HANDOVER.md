@@ -184,3 +184,41 @@ toasts, search placeholders, metadata titles, footer link columns.
 
 Verified: `npx tsc --noEmit`, `npm run lint`, `npm run build`,
 `npm run validate` all clean.
+
+## 2026-08-17 — AI gateway shipped (commit 07bdd10)
+
+The site is now an AI-native gateway as well as a website. One deterministic
+engine (`lib/camcue/engine.ts`) now serves four surfaces: the UI, REST
+`/api/v1`, the MCP server at `/mcp`, and markdown mirrors at `/md/*`.
+
+- `lib/gateway/core.ts` — serializers, fuzzy resolvers, `runRecommendation()`.
+  DATA_VERSION = engine version + max(lastVerified). All surfaces report it.
+- `lib/gateway/http.ts` — envelopes, request ids, CORS, 16KB body cap,
+  per-instance token-bucket rate limit (60/min/IP, honestly documented),
+  agent classification + stdout JSON analytics (no IPs stored).
+- REST: cameras / cameras/{slug} / scenarios / recommend / compare /
+  accessories / health / version. OpenAPI 3.1 at /api/v1/openapi.json,
+  discovery via RFC 9727 /.well-known/api-catalog. Success bodies return the
+  resource directly; errors are `{error:{code,message,request_id}}`.
+- MCP: mcp-handler 2.1.1. **API gotcha:** `server.registerTool(name, config,
+  cb)` with `inputSchema: z.object(...)`, and `createMcpHandler(initFn,
+  options)` — serverInfo goes INSIDE options; there is no third argument and
+  no `server.tool()`.
+- robots.txt: training crawlers (GPTBot, Google-Extended, CCBot, Bytespider)
+  blocked — allowing them is an owner decision, not a default. Citation
+  crawlers (OAI-SearchBot, PerplexityBot) allowed. llms.txt + sitemap live.
+- /ai portal page renders its example request/response by calling the real
+  engine at request time, so docs cannot drift from behavior.
+- `npm run validate` now also fails if the OpenAPI spec and the route files
+  on disk disagree, if the flagship fuzzy request ("DJI Osmo Action 6" +
+  "fishing from a moving boat" + "bright tropical daylight") breaks, if
+  output stops being deterministic, or if any camera/scene stops rendering
+  to markdown.
+
+Deferred deliberately (revisit when there's demand): WebMCP, Web Bot Auth /
+HTTP Message Signatures, llms-full.txt, distributed rate limiting, API
+keys/billing tiers (AgentIdentity stub ready in http.ts), MCP registry
+publication, analytics dashboard (structured stdout logs exist).
+
+Verified live on production: REST recommend, MCP initialize/tools/call
+(same recommendation_id as REST), all discovery URLs 200.
