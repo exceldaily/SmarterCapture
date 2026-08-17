@@ -70,10 +70,37 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
+// Structured data for search and answer engines. Kept to facts the site can
+// stand behind; no ratings or review markup we do not actually have.
+const siteJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${brand.siteUrl}/#organization`,
+      name: brand.name,
+      url: brand.siteUrl,
+      logo: `${brand.siteUrl}/logo.png`,
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${brand.siteUrl}/#website`,
+      name: brand.name,
+      url: brand.siteUrl,
+      description: `Deterministic, capability-checked camera settings recommendations for ${cameras.length} cameras.`,
+      publisher: { "@id": `${brand.siteUrl}/#organization` },
+    },
+  ],
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" data-scroll-behavior="smooth" className={`${archivo.variable} ${inter.variable} ${jetbrains.variable}`}>
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
+        />
         <LocaleProvider>{children}</LocaleProvider>
       </body>
     </html>

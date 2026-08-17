@@ -33,8 +33,50 @@ export default async function AccessoryPage({ params }: PageProps<"/gear/[slug]"
   const isReady = assessAccessoryLaunch(product.id).purchasable;
   const media = getAccessoryMedia(product.slug);
 
+  const productUrl = `${brand.siteUrl}/gear/${product.slug}`;
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Product",
+        "@id": `${productUrl}#product`,
+        name: product.name,
+        description: product.description,
+        url: productUrl,
+        ...(media?.images?.length ? { image: media.images.map((img) => `${brand.siteUrl}${img}`) } : {}),
+        brand: { "@type": "Brand", name: brand.name },
+        ...(isReady && product.retailPriceUsd
+          ? {
+              offers: {
+                "@type": "Offer",
+                url: productUrl,
+                price: product.retailPriceUsd.toFixed(2),
+                priceCurrency: "USD",
+                availability: "https://schema.org/InStock",
+                shippingDetails: {
+                  "@type": "OfferShippingDetails",
+                  shippingDestination: { "@type": "DefinedRegion", addressCountry: "US" },
+                },
+              },
+            }
+          : {}),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Gear", item: `${brand.siteUrl}/gear` },
+          { "@type": "ListItem", position: 2, name: product.name, item: productUrl },
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="gear-page">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
       <header className="gear-site-header">
         <Link href="/" className="gear-wordmark"><span className="gear-mark" />{brand.wordmark}</Link>
         <nav aria-label="Gear navigation"><Link href="/gear"><ArrowLeft size={15} /> <T k="gearNavAllGear" /></Link><Link href="/" ><T k="gearNavAssistant" /></Link><LanguageSwitcher /></nav>

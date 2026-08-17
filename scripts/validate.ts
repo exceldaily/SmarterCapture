@@ -20,6 +20,18 @@ import { accessorySourcingRecords } from "../lib/accessories/sourcing";
 import { accessorySampleQueue, buildSupplierInquiry, launchMarkets } from "../lib/accessories/verification";
 import { lightOptions, mountOptions } from "../lib/camcue/data/options";
 import type { LightId, MountId, Scenario } from "../lib/camcue/types";
+import { existsSync, readdirSync } from "node:fs";
+import { join } from "node:path";
+import { openapiSpec } from "../lib/gateway/openapi";
+import {
+  resolveCamera,
+  resolveScene,
+  runRecommendation,
+  serializeCameraFull,
+  serializeCameraSummary,
+  serializeScene,
+} from "../lib/gateway/core";
+import { cameraIndexMarkdown, cameraMarkdown, scenarioIndexMarkdown, scenarioMarkdown } from "../lib/gateway/markdown";
 
 const problems: string[] = [];
 const warnings: string[] = [];
@@ -263,6 +275,82 @@ for (const scene of scenes) {
     }
   }
 }
+
+// ---------- 6. AI gateway audit ----------
+// 6a. The OpenAPI document must describe exactly the /api/v1 routes that exist
+// on disk — a hand-authored spec is only acceptable if a machine keeps it honest.
+{
+  const v1Dir = join(process.cwd(), "app", "api", "v1");
+  const specPaths = Object.keys(openapiSpec.paths);
+  for (const specPath of specPaths) {
+    const diskPath = join(v1Dir, ...specPath.split("/").filter(Boolean).map((seg) => seg.replace(/^\{(.+)\}$/, "[$1]")), "route.ts");
+    if (!existsSync(diskPath)) fail(`OpenAPI documents ${specPath} but no route file exists at ${diskPath}`);
+  }
+  const walk = (dir: string, prefix: string): string[] => {
+    const found: string[] = [];
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      if (entry.isDirectory()) found.push(...walk(join(dir, entry.name), `${prefix}/${entry.name.replace(/^\[(.+)\]$/, "{$1}")}`));
+      else if (entry.name === "route.ts" && prefix) found.push(prefix);
+    }
+    return found;
+  };
+  for (const routePath of walk(v1Dir, "")) {
+    if (routePath === "/openapi.json") continue; // the spec doesn't describe its own serving route
+    if (!specPaths.includes(routePath)) fail(`Route app/api/v1${routePath} exists on disk but is undocumented in the OpenAPI spec`);
+  }
+}
+
+// 6b. Resolver honesty — the fuzzy resolvers must land the flagship example.
+{
+  const cam = resolveCamera("DJI Osmo Action 6");
+  if (cam?.id !== "dji-osmo-action-6") fail(`resolveCamera("DJI Osmo Action 6") resolved to ${cam?.id ?? "nothing"}`);
+  if (resolveCamera("osmo action 6")?.id !== "dji-osmo-action-6") fail(`resolveCamera("osmo action 6") failed to resolve`);
+  if (resolveCamera("some camera we do not carry") !== null) fail(`resolveCamera invented a match for an unknown camera`);
+  const scene = resolveScene("fishing from a moving boat");
+  if (!scene) fail(`resolveScene("fishing from a moving boat") resolved nothing`);
+}
+
+// 6c. The flagship gateway request must produce a complete, attributed result —
+// and be deterministic (same input, same data ⇒ byte-identical output).
+{
+  const input = { camera: "DJI Osmo Action 6", activity: "fishing from a moving boat", lighting: "bright tropical daylight" };
+  const first = runRecommendation(input);
+  const second = runRecommendation(input);
+  if (first.error || !first.result) {
+    fail(`Flagship gateway request failed: ${first.error ?? "no result"}`);
+  } else {
+    const r = first.result;
+    if (!r.recommendation_id?.startsWith("rec_")) fail("Gateway result: missing recommendation_id");
+    if (!r.settings || Object.keys(r.settings).length === 0) fail("Gateway result: empty settings block");
+    if (!r.canonical_url?.startsWith("https://")) fail("Gateway result: missing canonical_url");
+    if (!r.attribution) fail("Gateway result: missing attribution block");
+    if (!r.confidence?.meaning?.includes("not a statistical probability")) fail("Gateway result: confidence label lost its honest definition");
+    if (JSON.stringify(first) !== JSON.stringify(second)) fail("Gateway result is not deterministic for identical input");
+  }
+}
+
+// 6d. Every shipped camera and scene must serialize and render to markdown.
+for (const cam of cameras) {
+  try {
+    serializeCameraSummary(cam);
+    serializeCameraFull(cam);
+  } catch (err) {
+    fail(`${cam.model}: gateway serialization threw: ${err}`);
+  }
+  const md = cameraMarkdown(cam.id);
+  if (!md) fail(`${cam.model}: cameraMarkdown returned null for a shipped camera`);
+  else if (!md.includes(`/md/cameras/${cam.id}`)) fail(`${cam.model}: markdown page is missing its canonical URL`);
+}
+for (const scene of scenes) {
+  try {
+    serializeScene(scene);
+  } catch (err) {
+    fail(`${scene.id}: gateway serialization threw: ${err}`);
+  }
+  if (!scenarioMarkdown(scene.id)) fail(`${scene.id}: scenarioMarkdown returned null for a shipped scene`);
+}
+if (!cameraIndexMarkdown().includes(`${cameras.length} cameras`)) fail("Camera index markdown lost its camera count");
+if (!scenarioIndexMarkdown().includes(`${scenes.length} shooting scenarios`)) fail("Scenario index markdown lost its scenario count");
 
 // ---------- report ----------
 console.log(`\nSmarter Capture capability validation`);
